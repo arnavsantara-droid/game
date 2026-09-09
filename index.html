@@ -1,0 +1,1859 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#111318">
+<title>Historia 1936</title>
+
+<link rel="stylesheet"
+ href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+
+<style>
+:root{
+  --bg:#101216;
+  --panel:#181b20;
+  --panel2:#20242a;
+  --line:#30353d;
+  --text:#eceef1;
+  --muted:#969ca6;
+  --gold:#d0ad59;
+  --red:#c35a58;
+  --green:#67a774;
+  --blue:#648ebb;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:var(--text);
+font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+
+#app{
+ height:100%;
+ display:grid;
+ grid-template-columns:315px 1fr 365px;
+ grid-template-rows:52px 1fr;
+}
+
+header{
+ grid-column:1/4;
+ display:flex;
+ align-items:center;
+ gap:13px;
+ padding:0 13px;
+ background:#111318;
+ border-bottom:1px solid var(--line);
+ z-index:2000;
+}
+
+.logo{font-weight:900;letter-spacing:1.8px}
+.logo span{color:var(--gold)}
+
+.date{
+ background:#202329;
+ border:1px solid #373b43;
+ border-radius:6px;
+ padding:6px 9px;
+ font-size:12px;
+ font-weight:700;
+}
+.tension{font-size:11px;color:#db7975;font-weight:800}
+.grow{flex:1}
+
+.smallBtn{
+ color:#ddd;
+ background:#22262c;
+ border:1px solid #393e46;
+ border-radius:6px;
+ padding:7px 10px;
+}
+
+aside{
+ background:var(--panel);
+ min-height:0;
+}
+
+.left{
+ border-right:1px solid var(--line);
+ display:flex;
+ flex-direction:column;
+ min-height:0;
+}
+.right{
+ border-left:1px solid var(--line);
+ display:flex;
+ flex-direction:column;
+ min-height:0;
+}
+.center{
+ position:relative;
+ min-width:0;
+}
+
+#map{width:100%;height:100%;background:#16191e}
+
+.section{
+ padding:13px;
+ border-bottom:1px solid var(--line);
+}
+
+.countryRow{display:flex;gap:10px;align-items:center}
+.flag{font-size:27px;width:37px;text-align:center}
+.countryName{font-size:17px;font-weight:900}
+.sub{font-size:10px;color:var(--muted);margin-top:2px}
+
+.stats{
+ display:grid;
+ grid-template-columns:repeat(2,1fr);
+ gap:6px;
+ margin-top:11px;
+}
+.stat{
+ background:#20242a;
+ border:1px solid #2e333b;
+ border-radius:6px;
+ padding:7px;
+}
+.statName{
+ color:#90969f;
+ font-size:8px;
+ letter-spacing:.8px;
+ text-transform:uppercase;
+}
+.statValue{font-size:14px;font-weight:850;margin-top:2px}
+
+.tabs{
+ display:flex;
+ background:#13161a;
+ border-bottom:1px solid var(--line);
+}
+.tab{
+ flex:1;
+ border:0;
+ border-right:1px solid #2a2e35;
+ background:transparent;
+ color:#9298a1;
+ padding:10px 3px;
+ font-size:10px;
+ font-weight:800;
+}
+.tab.active{
+ background:#20242a;
+ color:white;
+ box-shadow:inset 0 -2px var(--gold);
+}
+
+#panel{
+ flex:1;
+ overflow:auto;
+ padding:11px;
+}
+
+textarea{
+ width:100%;
+ min-height:105px;
+ resize:vertical;
+ background:#111318;
+ border:1px solid #373c45;
+ border-radius:7px;
+ color:#f2f2f2;
+ padding:10px;
+ line-height:1.45;
+ outline:none;
+}
+textarea:focus{border-color:#797f89}
+
+.primary{
+ width:100%;
+ background:var(--gold);
+ color:#151515;
+ border:0;
+ border-radius:6px;
+ padding:10px;
+ font-weight:900;
+ margin-top:7px;
+}
+.secondary{
+ color:#eee;
+ background:#242830;
+ border:1px solid #3a3f48;
+ border-radius:6px;
+ padding:8px;
+}
+
+.heading{
+ font-size:10px;
+ color:#9399a3;
+ font-weight:900;
+ letter-spacing:1.2px;
+ text-transform:uppercase;
+ margin:5px 0 8px;
+}
+
+.hint{
+ color:#9399a3;
+ font-size:10px;
+ line-height:1.5;
+ margin-top:7px;
+}
+
+.queueItem,.card{
+ background:#20242a;
+ border:1px solid #323740;
+ border-radius:6px;
+ padding:9px;
+ margin:7px 0;
+ font-size:11px;
+ line-height:1.45;
+}
+
+.queueItem{
+ display:flex;
+ gap:6px;
+ justify-content:space-between;
+}
+.queueItem button{
+ background:transparent;
+ border:0;
+ color:#888;
+}
+
+.countryList{
+ border-top:1px solid var(--line);
+ max-height:210px;
+ overflow:auto;
+}
+.countryListItem{
+ padding:8px 12px;
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+ border-bottom:1px solid #282c33;
+ font-size:11px;
+ cursor:pointer;
+}
+.countryListItem:hover{background:#22262d}
+.relGood{color:#75bc83}
+.relBad{color:#d56a66}
+.relNeutral{color:#a7abb1}
+
+.timelineHead{
+ height:44px;
+ flex:none;
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+ padding:0 12px;
+ border-bottom:1px solid var(--line);
+ font-size:11px;
+ font-weight:900;
+ letter-spacing:.7px;
+}
+
+#timeline{
+ flex:1;
+ overflow:auto;
+ padding:10px;
+}
+
+.event{
+ background:#20242a;
+ border:1px solid #30353d;
+ border-left:3px solid #777;
+ border-radius:6px;
+ padding:9px;
+ margin-bottom:8px;
+}
+.event.war{border-left-color:#cf5d5a}
+.event.diplomacy{border-left-color:#658fc1}
+.event.economy{border-left-color:#68aa76}
+.event.politics{border-left-color:#c5a34f}
+.event.world{border-left-color:#9373b8}
+
+.eventDate{
+ color:#858b94;
+ font-size:8px;
+ text-transform:uppercase;
+ letter-spacing:.8px;
+}
+.eventTitle{font-size:12px;font-weight:900;margin:3px 0}
+.eventText{font-size:10px;color:#bdc1c8;line-height:1.5}
+
+.jump{
+ position:absolute;
+ z-index:1000;
+ bottom:15px;
+ left:15px;
+ background:#171a20e8;
+ border:1px solid #3c414b;
+ border-radius:8px;
+ padding:7px;
+ box-shadow:0 5px 20px #0007;
+}
+.jumpMain{
+ border:0;
+ border-radius:6px;
+ padding:10px 15px;
+ background:var(--gold);
+ color:#111;
+ font-weight:900;
+}
+.jumpOptions{
+ display:none;
+ position:absolute;
+ left:0;
+ bottom:54px;
+ width:180px;
+ border:1px solid #3d424b;
+ border-radius:7px;
+ overflow:hidden;
+ background:#191c21;
+}
+.jumpOptions button{
+ display:block;
+ width:100%;
+ border:0;
+ border-bottom:1px solid #2e3239;
+ background:transparent;
+ color:#eee;
+ padding:9px;
+ text-align:left;
+}
+.jumpOptions button:hover{background:#292d34}
+
+.mapNotice{
+ position:absolute;
+ z-index:1000;
+ left:50%;
+ top:12px;
+ transform:translateX(-50%);
+ background:#111d;
+ border:1px solid #444;
+ border-radius:6px;
+ padding:6px 9px;
+ font-size:10px;
+}
+
+.chatMessages{
+ max-height:260px;
+ overflow:auto;
+ margin-bottom:8px;
+}
+.message{
+ padding:8px;
+ border-radius:7px;
+ font-size:10px;
+ line-height:1.45;
+ margin:6px 0;
+ max-width:88%;
+}
+.message.me{margin-left:auto;background:#55482d}
+.message.them{background:#292e35}
+.chatRow{display:flex;gap:6px}
+.chatRow input{
+ flex:1;
+ min-width:0;
+ border:1px solid #383d46;
+ background:#111318;
+ color:white;
+ border-radius:6px;
+ padding:8px;
+}
+.chatRow button{
+ width:42px;
+ border:0;
+ border-radius:6px;
+ background:var(--gold);
+ font-weight:900;
+}
+
+.modalBg{
+ position:fixed;
+ inset:0;
+ z-index:9999;
+ background:#08090cdd;
+ backdrop-filter:blur(6px);
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ padding:15px;
+}
+.modal{
+ width:min(850px,100%);
+ max-height:90vh;
+ overflow:auto;
+ border:1px solid #414650;
+ border-radius:10px;
+ background:#181b20;
+ box-shadow:0 30px 100px #000;
+}
+.modalTop{
+ padding:20px;
+ border-bottom:1px solid var(--line);
+}
+.modalTop h1{margin:0 0 5px}
+.modalTop p{margin:0;color:#979da6;font-size:11px}
+.grid{
+ padding:15px;
+ display:grid;
+ grid-template-columns:repeat(3,1fr);
+ gap:8px;
+}
+.choice{
+ background:#22262d;
+ border:1px solid #363b44;
+ border-radius:7px;
+ padding:12px;
+ cursor:pointer;
+}
+.choice:hover{border-color:var(--gold);background:#292d35}
+.choice strong{display:block}
+.choice small{font-size:9px;color:#9da2aa}
+
+.mobileNav{display:none}
+
+.leaflet-container{font-family:inherit}
+.leaflet-control-attribution{font-size:7px!important;background:#111b!important;color:#777!important}
+.leaflet-control-attribution a{color:#999!important}
+
+@media(max-width:900px){
+ #app{display:block}
+ header{
+   position:fixed;
+   top:0;left:0;right:0;
+   height:46px;
+ }
+ .logo{font-size:11px}
+ .date{font-size:9px}
+ .desktop{display:none}
+
+ .center{
+   position:fixed;
+   top:46px;
+   left:0;right:0;
+   height:47vh;
+ }
+
+ .left,.right{
+   position:fixed;
+   top:calc(46px + 47vh);
+   left:0;right:0;
+   bottom:44px;
+   width:auto;
+   border:0;
+ }
+ .right{display:none}
+
+ .section{padding:8px 10px}
+ .countryName{font-size:13px}
+ .flag{font-size:21px}
+ .stats{display:none}
+ .countryList{display:none}
+ #panel{padding:8px}
+ textarea{min-height:70px}
+
+ .mobileNav{
+   position:fixed;
+   z-index:5000;
+   height:44px;
+   bottom:0;
+   left:0;right:0;
+   display:flex;
+   border-top:1px solid #383d45;
+   background:#12151a;
+ }
+ .mobileNav button{
+   flex:1;
+   color:#999;
+   border:0;
+   border-right:1px solid #292d34;
+   background:transparent;
+   font-size:9px;
+ }
+ .mobileNav button.active{color:#e2c36e;background:#22262d}
+
+ .grid{grid-template-columns:1fr 1fr}
+}
+
+@media(max-width:500px){
+ .grid{grid-template-columns:1fr}
+ .tension{display:none}
+}
+</style>
+</head>
+
+<body>
+
+<div id="app">
+
+<header>
+ <div class="logo">HISTORIA <span>1936</span></div>
+ <div class="date" id="date"></div>
+ <div class="tension" id="tension"></div>
+ <div class="grow"></div>
+ <button class="smallBtn desktop" onclick="rewindGame()">↶ Rewind</button>
+ <button class="smallBtn" onclick="saveGame()">Save</button>
+ <button class="smallBtn" onclick="loadGame()">Load</button>
+</header>
+
+<aside class="left" id="left">
+ <div class="section" id="countryHeader"></div>
+
+ <div class="tabs">
+  <button class="tab active" onclick="setTab('actions',this)">Actions</button>
+  <button class="tab" onclick="setTab('diplomacy',this)">Diplomacy</button>
+  <button class="tab" onclick="setTab('advisor',this)">Advisor</button>
+  <button class="tab" onclick="setTab('intel',this)">Intel</button>
+ </div>
+
+ <div id="panel"></div>
+
+ <div class="countryList" id="countryList"></div>
+</aside>
+
+<main class="center">
+ <div id="map"></div>
+ <div class="mapNotice" id="mapNotice">Loading world map…</div>
+
+ <div class="jump">
+  <button class="jumpMain" onclick="toggleJump()">▶▶ Jump Forward</button>
+  <div class="jumpOptions" id="jumpOptions">
+   <button onclick="jump(7)">One week</button>
+   <button onclick="jump(30)">One month</button>
+   <button onclick="jump(90)">Three months</button>
+   <button onclick="jump(180)">Six months</button>
+   <button onclick="jump(365)">One year</button>
+  </div>
+ </div>
+</main>
+
+<aside class="right" id="right">
+ <div class="timelineHead">
+   <span>WORLD TIMELINE</span>
+   <span id="round"></span>
+ </div>
+ <div id="timeline"></div>
+</aside>
+
+</div>
+
+<div class="mobileNav">
+ <button class="active" onclick="mobile('control',this)">Control</button>
+ <button onclick="mobile('map',this)">Map</button>
+ <button onclick="mobile('timeline',this)">Timeline</button>
+</div>
+
+<div id="startModal" class="modalBg">
+ <div class="modal">
+  <div class="modalTop">
+   <h1>World War II — Europe</h1>
+   <p>1 January 1936. Choose a nation. Historical conditions are the starting point; what happens next is yours.</p>
+  </div>
+  <div class="grid" id="startGrid"></div>
+ </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+/* ============================================================
+   HISTORIA 1936
+   Offline rules-driven alternate-history simulator.
+   Designed to run directly from GitHub Pages.
+============================================================ */
+
+const BASE = {
+ DEU:{name:"Germany",flag:"🇩🇪",leader:"Adolf Hitler",ideology:"Fascist",capital:"Berlin",xy:[52.52,13.405],industry:78,military:69,manpower:640,treasury:75,stability:72,tech:3.2,faction:"Axis",defense:2},
+ GBR:{name:"United Kingdom",flag:"🇬🇧",leader:"Stanley Baldwin",ideology:"Democratic",capital:"London",xy:[51.507,-0.128],industry:87,military:70,manpower:505,treasury:91,stability:84,tech:4.0,faction:"Allies",defense:4},
+ FRA:{name:"France",flag:"🇫🇷",leader:"Albert Sarraut",ideology:"Democratic",capital:"Paris",xy:[48.857,2.352],industry:80,military:73,manpower:470,treasury:79,stability:68,tech:3.4,faction:"Allies",defense:8},
+ RUS:{name:"Soviet Union",flag:"☭",leader:"Joseph Stalin",ideology:"Communist",capital:"Moscow",xy:[55.756,37.617],industry:73,military:79,manpower:1200,treasury:68,stability:62,tech:3.0,faction:"Comintern",defense:3},
+ ITA:{name:"Italy",flag:"🇮🇹",leader:"Benito Mussolini",ideology:"Fascist",capital:"Rome",xy:[41.903,12.496],industry:57,military:57,manpower:480,treasury:54,stability:72,tech:2.4,faction:"Axis",defense:2},
+ POL:{name:"Poland",flag:"🇵🇱",leader:"Ignacy Mościcki",ideology:"Authoritarian",capital:"Warsaw",xy:[52.23,21.012],industry:43,military:50,manpower:390,treasury:44,stability:72,tech:2.0,faction:"Independent",defense:3},
+ CZE:{name:"Czechoslovakia",flag:"🇨🇿",leader:"Edvard Beneš",ideology:"Democratic",capital:"Prague",xy:[50.075,14.438],industry:56,military:50,manpower:160,treasury:57,stability:77,tech:2.7,faction:"Independent",defense:8},
+ AUT:{name:"Austria",flag:"🇦🇹",leader:"Kurt Schuschnigg",ideology:"Authoritarian",capital:"Vienna",xy:[48.208,16.374],industry:34,military:25,manpower:84,treasury:38,stability:59,tech:1.6,faction:"Independent",defense:2},
+ BEL:{name:"Belgium",flag:"🇧🇪",leader:"Leopold III",ideology:"Democratic",capital:"Brussels",xy:[50.85,4.352],industry:52,military:31,manpower:93,treasury:61,stability:84,tech:2.4,faction:"Independent",defense:5},
+ NLD:{name:"Netherlands",flag:"🇳🇱",leader:"Wilhelmina",ideology:"Democratic",capital:"Amsterdam",xy:[52.367,4.904],industry:51,military:29,manpower:95,treasury:65,stability:87,tech:2.4,faction:"Independent",defense:3},
+ ESP:{name:"Spain",flag:"🇪🇸",leader:"Manuel Azaña",ideology:"Democratic",capital:"Madrid",xy:[40.416,-3.704],industry:40,military:42,manpower:282,treasury:35,stability:35,tech:1.7,faction:"Independent",defense:2},
+ PRT:{name:"Portugal",flag:"🇵🇹",leader:"António Salazar",ideology:"Authoritarian",capital:"Lisbon",xy:[38.722,-9.139],industry:27,military:24,manpower:82,treasury:38,stability:79,tech:1.3,faction:"Independent",defense:2},
+ DNK:{name:"Denmark",flag:"🇩🇰",leader:"Christian X",ideology:"Democratic",capital:"Copenhagen",xy:[55.676,12.568],industry:34,military:18,manpower:45,treasury:51,stability:89,tech:1.8,faction:"Independent",defense:1},
+ NOR:{name:"Norway",flag:"🇳🇴",leader:"Haakon VII",ideology:"Democratic",capital:"Oslo",xy:[59.913,10.752],industry:34,military:22,manpower:41,treasury:48,stability:89,tech:1.8,faction:"Independent",defense:3},
+ SWE:{name:"Sweden",flag:"🇸🇪",leader:"Gustaf V",ideology:"Democratic",capital:"Stockholm",xy:[59.33,18.069],industry:45,military:30,manpower:66,treasury:62,stability:91,tech:2.3,faction:"Independent",defense:3},
+ FIN:{name:"Finland",flag:"🇫🇮",leader:"P. E. Svinhufvud",ideology:"Democratic",capital:"Helsinki",xy:[60.17,24.938],industry:31,military:39,manpower:42,treasury:41,stability:82,tech:1.9,faction:"Independent",defense:6},
+ ROU:{name:"Romania",flag:"🇷🇴",leader:"Carol II",ideology:"Authoritarian",capital:"Bucharest",xy:[44.426,26.102],industry:39,military:43,manpower:230,treasury:45,stability:61,tech:1.7,faction:"Independent",defense:2},
+ HUN:{name:"Hungary",flag:"🇭🇺",leader:"Miklós Horthy",ideology:"Authoritarian",capital:"Budapest",xy:[47.498,19.04],industry:35,military:38,manpower:100,treasury:41,stability:71,tech:1.8,faction:"Independent",defense:2},
+ SRB:{name:"Yugoslavia",flag:"🇷🇸",leader:"Prince Paul",ideology:"Authoritarian",capital:"Belgrade",xy:[44.787,20.449],industry:31,military:38,manpower:155,treasury:37,stability:58,tech:1.5,faction:"Independent",defense:3},
+ GRC:{name:"Greece",flag:"🇬🇷",leader:"George II",ideology:"Authoritarian",capital:"Athens",xy:[37.984,23.728],industry:25,military:34,manpower:83,treasury:32,stability:63,tech:1.4,faction:"Independent",defense:4},
+ TUR:{name:"Turkey",flag:"🇹🇷",leader:"Mustafa Kemal Atatürk",ideology:"Authoritarian",capital:"Ankara",xy:[39.933,32.86],industry:35,military:51,manpower:210,treasury:43,stability:75,tech:1.8,faction:"Independent",defense:4},
+ CHE:{name:"Switzerland",flag:"🇨🇭",leader:"Federal Council",ideology:"Democratic",capital:"Bern",xy:[46.948,7.447],industry:46,military:35,manpower:48,treasury:72,stability:95,tech:2.5,faction:"Neutral",defense:13},
+ IRL:{name:"Ireland",flag:"🇮🇪",leader:"Éamon de Valera",ideology:"Democratic",capital:"Dublin",xy:[53.349,-6.26],industry:23,military:17,manpower:31,treasury:39,stability:81,tech:1.4,faction:"Independent",defense:1},
+ LTU:{name:"Lithuania",flag:"🇱🇹",leader:"Antanas Smetona",ideology:"Authoritarian",capital:"Kaunas",xy:[54.898,23.904],industry:18,military:21,manpower:28,treasury:25,stability:68,tech:1.1,faction:"Independent",defense:1},
+ LVA:{name:"Latvia",flag:"🇱🇻",leader:"Kārlis Ulmanis",ideology:"Authoritarian",capital:"Riga",xy:[56.949,24.106],industry:18,military:19,manpower:22,treasury:25,stability:68,tech:1.1,faction:"Independent",defense:1},
+ EST:{name:"Estonia",flag:"🇪🇪",leader:"Konstantin Päts",ideology:"Authoritarian",capital:"Tallinn",xy:[59.437,24.754],industry:17,military:18,manpower:17,treasury:23,stability:69,tech:1.2,faction:"Independent",defense:1},
+ USA:{name:"United States",flag:"🇺🇸",leader:"Franklin D. Roosevelt",ideology:"Democratic",capital:"Washington",xy:[38.907,-77.037],industry:100,military:54,manpower:1300,treasury:100,stability:85,tech:4.8,faction:"Independent",defense:3},
+ JPN:{name:"Japan",flag:"🇯🇵",leader:"Hirohito",ideology:"Authoritarian",capital:"Tokyo",xy:[35.676,139.65],industry:69,military:81,manpower:690,treasury:63,stability:76,tech:3.3,faction:"Independent",defense:3}
+};
+
+const COLORS={
+ Fascist:"#9e5550",
+ Democratic:"#587d9f",
+ Communist:"#a54747",
+ Authoritarian:"#817962",
+ Neutral:"#6d7377"
+};
+
+const PLAYABLE=["DEU","GBR","FRA","RUS","ITA","POL","CZE","USA","JPN"];
+
+let state;
+let map;
+let geoLayer;
+let currentTab="actions";
+
+function freshState(){
+ const countries=JSON.parse(JSON.stringify(BASE));
+ const relations={};
+
+ for(const a in countries){
+   relations[a]={};
+   for(const b in countries){
+     if(a===b) continue;
+     let r=0;
+
+     if(countries[a].faction===countries[b].faction &&
+        countries[a].faction!=="Independent") r+=35;
+
+     if(countries[a].ideology===countries[b].ideology) r+=12;
+
+     if(
+       (countries[a].ideology==="Fascist" && countries[b].ideology==="Communist") ||
+       (countries[a].ideology==="Communist" && countries[b].ideology==="Fascist")
+     ) r-=30;
+
+     relations[a][b]=r;
+   }
+ }
+
+ return{
+   player:null,
+   selected:"DEU",
+   date:"1936-01-01",
+   round:0,
+   tension:4,
+   countries,
+   relations,
+   actions:[],
+   wars:[],
+   events:[],
+   history:[],
+   chats:{},
+   historical:{},
+   defeated:{}
+ };
+}
+
+state=freshState();
+
+function D(){return new Date(state.date+"T12:00:00")}
+
+function fmtDate(){
+ return D().toLocaleDateString("en-GB",{
+   day:"numeric",month:"long",year:"numeric"
+ });
+}
+
+function clamp(x,min,max){return Math.max(min,Math.min(max,x))}
+function rand(a,b){return Math.random()*(b-a)+a}
+function pick(a){return a[Math.floor(Math.random()*a.length)]}
+function clone(x){return JSON.parse(JSON.stringify(x))}
+
+function esc(s){
+ return String(s)
+ .replaceAll("&","&amp;")
+ .replaceAll("<","&lt;")
+ .replaceAll(">","&gt;")
+ .replaceAll('"',"&quot;");
+}
+
+function country(code){return state.countries[code]}
+function rel(a,b){return state.relations[a]?.[b] ?? 0}
+
+function setRel(a,b,v){
+ state.relations[a][b]=clamp(Math.round(v),-100,100);
+ state.relations[b][a]=state.relations[a][b];
+}
+
+function addRel(a,b,v){setRel(a,b,rel(a,b)+v)}
+
+function addEvent(title,text,type="world"){
+ state.events.unshift({
+   date:state.date,
+   title,
+   text,
+   type
+ });
+ if(state.events.length>150) state.events.length=150;
+ renderTimeline();
+}
+
+function snapshot(){
+ state.history.push({
+   date:state.date,
+   round:state.round,
+   tension:state.tension,
+   countries:clone(state.countries),
+   relations:clone(state.relations),
+   wars:clone(state.wars),
+   events:clone(state.events),
+   historical:clone(state.historical),
+   defeated:clone(state.defeated)
+ });
+ if(state.history.length>12)state.history.shift();
+}
+
+function rewindGame(){
+ const h=state.history.pop();
+ if(!h){
+   alert("Nothing to rewind yet.");
+   return;
+ }
+ Object.assign(state,h);
+ refreshAll();
+ addEvent("Timeline Rewound","The simulation has been restored to the previous jump.","world");
+}
+
+function saveGame(){
+ localStorage.setItem("historia1936",JSON.stringify(state));
+ alert("Game saved on this device.");
+}
+
+function loadGame(){
+ const s=localStorage.getItem("historia1936");
+ if(!s){
+   alert("No saved game was found.");
+   return;
+ }
+ state=JSON.parse(s);
+ document.getElementById("startModal").style.display="none";
+ refreshAll();
+}
+
+function selectPlayer(code){
+ state.player=code;
+ state.selected=code;
+ document.getElementById("startModal").style.display="none";
+
+ addEvent(
+   "A New Government Takes Control",
+   `You assume leadership of ${country(code).name}. Europe stands at a crossroads.`,
+   "politics"
+ );
+
+ refreshAll();
+}
+
+function renderStart(){
+ const box=document.getElementById("startGrid");
+ box.innerHTML=PLAYABLE.map(code=>{
+   const c=country(code);
+   return `
+   <div class="choice" onclick="selectPlayer('${code}')">
+    <strong>${c.flag} ${c.name}</strong>
+    <small>${c.leader}<br>${c.ideology} · ${c.faction}</small>
+   </div>`;
+ }).join("");
+}
+
+function refreshTop(){
+ document.getElementById("date").textContent=fmtDate();
+ document.getElementById("tension").textContent=
+   `World Tension ${Math.round(state.tension)}%`;
+ document.getElementById("round").textContent=`Round ${state.round}`;
+}
+
+function renderCountryHeader(){
+ const c=country(state.player || state.selected);
+ if(!c)return;
+
+ document.getElementById("countryHeader").innerHTML=`
+ <div class="countryRow">
+  <div class="flag">${c.flag}</div>
+  <div>
+   <div class="countryName">${c.name}</div>
+   <div class="sub">${c.leader} · ${c.ideology} · ${c.faction}</div>
+  </div>
+ </div>
+
+ <div class="stats">
+  <div class="stat"><div class="statName">Industry</div><div class="statValue">${Math.round(c.industry)}</div></div>
+  <div class="stat"><div class="statName">Military</div><div class="statValue">${Math.round(c.military)}</div></div>
+  <div class="stat"><div class="statName">Manpower</div><div class="statValue">${Math.round(c.manpower)}k</div></div>
+  <div class="stat"><div class="statName">Treasury</div><div class="statValue">${Math.round(c.treasury)}</div></div>
+  <div class="stat"><div class="statName">Stability</div><div class="statValue">${Math.round(c.stability)}%</div></div>
+  <div class="stat"><div class="statName">Technology</div><div class="statValue">${c.tech.toFixed(1)}</div></div>
+ </div>`;
+}
+
+function renderCountryList(){
+ if(!state.player)return;
+
+ let arr=Object.keys(state.countries)
+   .filter(x=>x!==state.player)
+   .sort((a,b)=>country(a).name.localeCompare(country(b).name));
+
+ document.getElementById("countryList").innerHTML=
+ arr.map(code=>{
+   let r=rel(state.player,code);
+   let cl=r>20?"relGood":r<-20?"relBad":"relNeutral";
+   return `
+   <div class="countryListItem" onclick="chooseCountry('${code}')">
+    <span>${country(code).flag} ${country(code).name}</span>
+    <span class="${cl}">${r>0?"+":""}${r}</span>
+   </div>`;
+ }).join("");
+}
+
+function chooseCountry(code){
+ state.selected=code;
+ if(currentTab==="diplomacy")renderPanel();
+ if(map && country(code).xy) map.flyTo(country(code).xy,5);
+}
+
+function setTab(tab,button){
+ currentTab=tab;
+ document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
+ button.classList.add("active");
+ renderPanel();
+}
+
+function renderPanel(){
+ const p=document.getElementById("panel");
+ if(!state.player){
+   p.innerHTML="<div class='hint'>Choose a country first.</div>";
+   return;
+ }
+
+ if(currentTab==="actions")renderActions(p);
+ if(currentTab==="diplomacy")renderDiplomacy(p);
+ if(currentTab==="advisor")renderAdvisor(p);
+ if(currentTab==="intel")renderIntel(p);
+}
+
+function renderActions(p){
+ p.innerHTML=`
+ <div class="heading">Issue an action</div>
+
+ <textarea id="actionInput"
+ placeholder="Examples:
+
+Invade Poland.
+Increase fighter production.
+Fortify the French border.
+Demand political union with Austria.
+Begin a major industrial expansion.
+Secretly improve relations with the Soviet Union."></textarea>
+
+ <button class="primary" onclick="queueAction()">Queue Action</button>
+
+ <div class="hint">
+ Actions are resolved when you jump forward. The engine interprets military,
+ diplomatic, political, economic and research instructions.
+ </div>
+
+ <div class="heading" style="margin-top:16px">Queued Actions</div>
+ <div id="queue"></div>
+ `;
+
+ renderQueue();
+}
+
+function renderQueue(){
+ const q=document.getElementById("queue");
+ if(!q)return;
+
+ if(!state.actions.length){
+   q.innerHTML="<div class='hint'>No actions queued.</div>";
+   return;
+ }
+
+ q.innerHTML=state.actions.map((x,i)=>`
+ <div class="queueItem">
+  <span>${esc(x)}</span>
+  <button onclick="removeAction(${i})">×</button>
+ </div>
+ `).join("");
+}
+
+function queueAction(){
+ const el=document.getElementById("actionInput");
+ const text=el.value.trim();
+ if(!text)return;
+
+ state.actions.push(text);
+ el.value="";
+ renderQueue();
+}
+
+function removeAction(i){
+ state.actions.splice(i,1);
+ renderQueue();
+}
+
+function renderDiplomacy(p){
+ let target=state.selected;
+ if(!target || target===state.player){
+   target=Object.keys(state.countries).find(x=>x!==state.player);
+   state.selected=target;
+ }
+
+ const c=country(target);
+ if(!state.chats[target])state.chats[target]=[];
+
+ p.innerHTML=`
+ <div class="heading">Diplomatic Channel</div>
+
+ <div class="card">
+  <b>${c.flag} ${c.name}</b><br>
+  <span class="hint">${c.leader} · Relations ${rel(state.player,target)}</span>
+ </div>
+
+ <select id="dipTarget"
+ style="width:100%;background:#111318;color:#eee;border:1px solid #373c45;
+ border-radius:6px;padding:8px;margin-bottom:8px"
+ onchange="state.selected=this.value;renderPanel()">
+ ${Object.keys(state.countries)
+ .filter(x=>x!==state.player)
+ .map(x=>`<option value="${x}" ${x===target?"selected":""}>${country(x).name}</option>`)
+ .join("")}
+ </select>
+
+ <div class="chatMessages" id="chatMessages">
+ ${state.chats[target].map(m=>`
+  <div class="message ${m.who==='me'?'me':'them'}">${esc(m.text)}</div>
+ `).join("")}
+ </div>
+
+ <div class="chatRow">
+  <input id="chatInput"
+  placeholder="Propose a treaty, threaten, negotiate…"
+  onkeydown="if(event.key==='Enter')sendDiplomacy()">
+  <button onclick="sendDiplomacy()">➤</button>
+ </div>
+ `;
+}
+
+function sendDiplomacy(){
+ const input=document.getElementById("chatInput");
+ const text=input.value.trim();
+ if(!text)return;
+
+ const target=state.selected;
+ state.chats[target].push({who:"me",text});
+
+ const reply=diplomaticReply(target,text);
+ state.chats[target].push({who:"them",text:reply});
+
+ renderPanel();
+}
+
+function diplomaticReply(target,text){
+ const t=text.toLowerCase();
+ const r=rel(state.player,target);
+ const us=country(state.player);
+ const them=country(target);
+
+ let disposition=r + (us.military-them.military)*0.18 + rand(-15,15);
+
+ if(t.match(/alliance|ally|join us|military pact/)){
+   if(disposition>28){
+     them.faction=us.faction==="Independent" ? `${us.name} Bloc` : us.faction;
+     if(us.faction==="Independent")us.faction=them.faction;
+     addRel(state.player,target,25);
+
+     addEvent(
+       "Alliance Agreement",
+       `${us.name} and ${them.name} conclude a strategic alliance.`,
+       "diplomacy"
+     );
+
+     return "We accept. Our governments will coordinate their security and strategic policy.";
+   }
+
+   addRel(state.player,target,-3);
+   return disposition>-5
+     ?"We are prepared to continue discussions, but we cannot enter such an alliance at present."
+     :"Your proposal is unacceptable under present circumstances.";
+ }
+
+ if(t.match(/non.?aggression|peace|neutrality pact/)){
+   if(disposition>-5){
+     addRel(state.player,target,13);
+     return "We are willing to accept a non-aggression understanding, provided our sovereignty and interests are respected.";
+   }
+   return "We do not believe your government currently offers sufficient guarantees for such an agreement.";
+ }
+
+ if(t.match(/trade|economic|resources|oil|steel/)){
+   if(r>-35){
+     addRel(state.player,target,7);
+     us.treasury+=2;
+     them.treasury+=2;
+     addEvent("Trade Agreement",`${us.name} and ${them.name} expand bilateral trade.`,"economy");
+     return "The proposal is economically useful. We are prepared to proceed with negotiations.";
+   }
+   return "Political relations must improve before a meaningful economic agreement can be considered.";
+ }
+
+ if(t.match(/demand|ultimatum|surrender|give us|cede|annex/)){
+   if(us.military > them.military*1.8 && disposition>0){
+     addRel(state.player,target,-35);
+     them.stability-=8;
+     return "We strongly object, but the military situation leaves us little room. We request terms and guarantees.";
+   }
+
+   addRel(state.player,target,-20);
+   state.tension+=3;
+   return "We reject this ultimatum. Any violation of our sovereignty will have consequences.";
+ }
+
+ if(t.match(/threat|war|invade|attack/)){
+   addRel(state.player,target,-25);
+   state.tension+=2;
+   return "We will not be intimidated. Our government is preparing appropriate defensive measures.";
+ }
+
+ if(t.match(/improve|friend|cooperate|relations/)){
+   addRel(state.player,target,8);
+   return "We welcome the constructive tone and are prepared to explore closer relations.";
+ }
+
+ addRel(state.player,target,2);
+ return pick([
+   "We have received your proposal and will consider it in light of our national interests.",
+   "Your position is understood. Further negotiations may be productive.",
+   "Our government requires clearer guarantees before taking a formal position.",
+   "We acknowledge your message. Our response will depend on developments elsewhere in Europe."
+ ]);
+}
+
+function renderAdvisor(p){
+ const us=country(state.player);
+
+ let advice=[];
+
+ if(us.treasury<35)
+   advice.push("Treasury reserves are becoming dangerous. Avoid expensive military expansion.");
+
+ if(us.military<55)
+   advice.push("Our armed forces are not prepared for a major continental war.");
+
+ if(us.stability<55)
+   advice.push("Domestic stability is weak. Political consolidation should take priority.");
+
+ if(state.tension>50)
+   advice.push("World tension is high. Great-power intervention is increasingly likely.");
+
+ if(state.wars.some(w=>w.a===state.player || w.b===state.player))
+   advice.push("We are at war. Industry, manpower and defensive preparation now matter more than diplomatic prestige.");
+
+ if(us.industry<60)
+   advice.push("Expanding industrial capacity would improve long-term military potential.");
+
+ const dangerous=Object.keys(state.countries)
+ .filter(x=>x!==state.player && !state.defeated[x])
+ .sort((a,b)=>country(b).military-country(a).military)[0];
+
+ advice.push(
+   `${country(dangerous).name} currently represents one of the strongest military powers in the simulation.`
+ );
+
+ advice.push(
+   "Remember that aggressive actions raise world tension and make defensive coalitions more likely."
+ );
+
+ p.innerHTML=`
+ <div class="heading">Strategic Advisor</div>
+ ${advice.map(x=>`<div class="card">${x}</div>`).join("")}
+
+ <div class="heading">Possible Orders</div>
+ <div class="hint">
+ • Expand heavy industry<br>
+ • Rearm the air force<br>
+ • Fortify our eastern border<br>
+ • Seek an alliance with Britain<br>
+ • Demand territory from a neighbour<br>
+ • Begin military research<br>
+ • Launch an invasion
+ </div>
+ `;
+}
+
+function renderIntel(p){
+ const target=state.selected===state.player
+   ? Object.keys(state.countries).find(x=>x!==state.player)
+   : state.selected;
+
+ const c=country(target);
+
+ const wars=state.wars.filter(w=>w.a===target||w.b===target);
+
+ p.innerHTML=`
+ <div class="heading">Foreign Intelligence</div>
+
+ <div class="card">
+  <b>${c.flag} ${c.name}</b><br>
+  Leader: ${c.leader}<br>
+  Government: ${c.ideology}<br>
+  Alignment: ${c.faction}<br><br>
+
+  Industry estimate: ${Math.round(c.industry)}<br>
+  Military estimate: ${Math.round(c.military)}<br>
+  Manpower: ~${Math.round(c.manpower)}k<br>
+  Stability: ${Math.round(c.stability)}%<br>
+  Technology: ${c.tech.toFixed(1)}<br>
+  Defensive preparation: ${Math.round(c.defense)}
+ </div>
+
+ <div class="card">
+  Relations with us:
+  <b>${rel(state.player,target)}</b>
+ </div>
+
+ ${wars.length
+ ? wars.map(w=>`<div class="card">At war with ${country(w.a===target?w.b:w.a).name}</div>`).join("")
+ : "<div class='hint'>No known active wars.</div>"}
+ `;
+}
+
+function detectTarget(text,exclude){
+ const low=text.toLowerCase();
+
+ return Object.keys(state.countries)
+ .filter(x=>x!==exclude)
+ .find(code=>{
+   const c=country(code);
+   return low.includes(c.name.toLowerCase()) ||
+          low.includes(c.capital.toLowerCase()) ||
+          low.includes(code.toLowerCase());
+ });
+}
+
+function resolveAction(text){
+ const actor=state.player;
+ const us=country(actor);
+ const t=text.toLowerCase();
+ const target=detectTarget(text,actor);
+
+ if(t.match(/invade|attack|declare war|invasion|go to war/)){
+   if(!target){
+     addEvent("Military Planning",
+       `${us.name} begins preparing for offensive operations, but no clear target was specified.`,
+       "war");
+     us.military+=1;
+     return;
+   }
+
+   declareWar(actor,target);
+   return;
+ }
+
+ if(t.match(/industry|factory|factories|industrial|infrastructure/)){
+   const cost=5;
+   if(us.treasury<cost){
+     addEvent("Industrial Plan Delayed",
+       `${us.name} lacks the financial reserves required for the proposed industrial program.`,
+       "economy");
+     return;
+   }
+
+   us.treasury-=cost;
+   us.industry+=rand(2,5);
+   us.stability+=1;
+
+   addEvent("Industrial Expansion",
+     `${us.name} directs new investment toward factories, transport and strategic production.`,
+     "economy");
+   return;
+ }
+
+ if(t.match(/rearm|army|troops|military|fighter|tank|navy|air force|airforce|weapons/)){
+   if(us.treasury<4 || us.manpower<10){
+     addEvent("Rearmament Constraints",
+       `${us.name} struggles to finance the requested expansion of the armed forces.`,
+       "war");
+     return;
+   }
+
+   us.treasury-=4;
+   us.manpower-=8;
+   us.military+=rand(2,5);
+   state.tension+=1;
+
+   addEvent("Rearmament Program",
+     `${us.name} expands military procurement, training and operational readiness.`,
+     "war");
+   return;
+ }
+
+ if(t.match(/fortif|defensive|bunker|defence|defense/)){
+   us.treasury-=3;
+   us.defense+=rand(2,4);
+
+   addEvent("Fortification Program",
+     `${us.name} strengthens defensive positions and prepares key approaches against attack.`,
+     "war");
+   return;
+ }
+
+ if(t.match(/research|technology|scientist|radar|rocket|nuclear/)){
+   if(us.treasury<4)return;
+
+   us.treasury-=4;
+   us.tech+=rand(.15,.35);
+
+   addEvent("Research Initiative",
+     `${us.name} increases investment in military and industrial research.`,
+     "economy");
+   return;
+ }
+
+ if(t.match(/propaganda|stability|political campaign|national unity/)){
+   us.treasury-=2;
+   us.stability=clamp(us.stability+rand(2,5),0,100);
+
+   addEvent("Domestic Political Campaign",
+     `${us.name} launches a campaign designed to strengthen public support for the government.`,
+     "politics");
+   return;
+ }
+
+ if(t.match(/trade|economic agreement|commerce/)){
+   if(target){
+     us.treasury+=3;
+     country(target).treasury+=2;
+     addRel(actor,target,6);
+
+     addEvent("Commercial Agreement",
+       `${us.name} expands trade with ${country(target).name}.`,
+       "economy");
+   }
+   return;
+ }
+
+ if(t.match(/alliance|ally|military pact/)){
+   if(!target)return;
+
+   const score=rel(actor,target)+(us.military-country(target).military)*.15+rand(-15,15);
+
+   if(score>15){
+     if(us.faction==="Independent")
+       us.faction=`${us.name} Bloc`;
+
+     country(target).faction=us.faction;
+     addRel(actor,target,22);
+
+     addEvent("New Alliance",
+       `${us.name} and ${country(target).name} conclude a formal strategic alliance.`,
+       "diplomacy");
+   }else{
+     addRel(actor,target,-4);
+
+     addEvent("Alliance Proposal Rejected",
+       `${country(target).name} declines ${us.name}'s proposed alliance.`,
+       "diplomacy");
+   }
+   return;
+ }
+
+ if(t.match(/improve relations|diplomatic mission|negotiate|embassy/)){
+   if(target){
+     addRel(actor,target,10);
+
+     addEvent("Diplomatic Initiative",
+       `${us.name} opens a new diplomatic initiative toward ${country(target).name}.`,
+       "diplomacy");
+   }
+   return;
+ }
+
+ if(t.match(/anschluss|union|annex|demand|ultimatum|cede|territory/)){
+   if(!target)return;
+
+   const them=country(target);
+   let pressure=
+     us.military/them.military*22 +
+     rel(actor,target)*.2 +
+     (100-them.stability)*.3 +
+     rand(-15,15);
+
+   state.tension+=3;
+   addRel(actor,target,-12);
+
+   if(pressure>50){
+     absorb(actor,target,
+       `${us.name} successfully imposes its political demands on ${them.name}.`);
+   }else{
+     them.stability-=4;
+
+     addEvent("International Crisis",
+       `${them.name} rejects major political demands from ${us.name}. Tension rises sharply.`,
+       "politics");
+   }
+   return;
+ }
+
+ // Generic Pax-style interpretation.
+ const effects=[
+   ()=>{
+     us.stability+=2;
+     addEvent("Government Initiative",
+       `${us.name} begins implementing the policy: “${text}”. Initial domestic reaction is cautiously favourable.`,
+       "politics");
+   },
+   ()=>{
+     us.treasury+=2;
+     addEvent("Policy Implemented",
+       `${us.name} proceeds with: “${text}”. The initiative produces modest economic benefits.`,
+       "economy");
+   },
+   ()=>{
+     state.tension+=1;
+     addEvent("International Reaction",
+       `${us.name} undertakes: “${text}”. Foreign governments begin reassessing their policies.`,
+       "diplomacy");
+   }
+ ];
+
+ pick(effects)();
+}
+
+function declareWar(a,b){
+ if(state.defeated[a]||state.defeated[b])return;
+
+ if(state.wars.some(w=>
+   (w.a===a&&w.b===b)||(w.a===b&&w.b===a)))return;
+
+ state.wars.push({
+   a,b,
+   progress:0,
+   duration:0
+ });
+
+ addRel(a,b,-100);
+ state.tension=clamp(state.tension+12,0,100);
+
+ addEvent(
+   "War Declared",
+   `${country(a).name} has declared war on ${country(b).name}.`,
+   "war"
+ );
+
+ coalitionReaction(a,b);
+}
+
+function coalitionReaction(attacker,defender){
+ const A=country(attacker);
+ const Df=country(defender);
+
+ Object.keys(state.countries).forEach(code=>{
+   if(code===attacker||code===defender)return;
+
+   const c=country(code);
+
+   if(c.faction===Df.faction &&
+      Df.faction!=="Independent" &&
+      Df.faction!=="Neutral" &&
+      !state.defeated[code]){
+
+     if(!state.wars.some(w=>
+       (w.a===code&&w.b===attacker)||(w.b===code&&w.a===attacker))){
+       state.wars.push({a:attacker,b:code,progress:0,duration:0});
+
+       addEvent(
+         "Alliance Enters War",
+         `${c.name} enters the conflict in support of ${Df.name}.`,
+         "war"
+       );
+     }
+   }
+ });
+}
+
+function absorb(winner,loser,description){
+ if(state.defeated[loser])return;
+
+ state.defeated[loser]=winner;
+ country(loser).military=Math.max(2,country(loser).military*.15);
+ country(winner).industry+=country(loser).industry*.30;
+ country(winner).treasury+=country(loser).treasury*.20;
+ state.tension+=4;
+
+ state.wars=state.wars.filter(w=>w.a!==loser&&w.b!==loser);
+
+ addEvent(
+   "Territorial Settlement",
+   description || `${country(winner).name} defeats and occupies ${country(loser).name}.`,
+   "war"
+ );
+
+ restyleMap();
+}
+
+function resolveWars(days){
+ for(const w of [...state.wars]){
+   if(state.defeated[w.a]||state.defeated[w.b])continue;
+
+   const A=country(w.a);
+   const B=country(w.b);
+
+   w.duration+=days;
+
+   const powerA=
+     A.military *
+     (0.7+A.tech*.1) *
+     (0.8+A.industry/300) *
+     rand(.85,1.15);
+
+   const powerB=
+     B.military *
+     (0.7+B.tech*.1) *
+     (0.8+B.industry/300) *
+     (1+B.defense/35) *
+     rand(.85,1.15);
+
+   const shift=(powerA-powerB)/(powerA+powerB)*30*(days/30);
+
+   w.progress=clamp(w.progress+shift,-100,100);
+
+   const casualtyScale=Math.max(.3,days/30);
+
+   A.manpower=Math.max(0,A.manpower-rand(1,4)*casualtyScale);
+   B.manpower=Math.max(0,B.manpower-rand(1,4)*casualtyScale);
+
+   A.military=Math.max(3,A.military-rand(.2,1.2)*casualtyScale);
+   B.military=Math.max(3,B.military-rand(.2,1.2)*casualtyScale);
+
+   if(Math.abs(shift)>6 || w.duration%90<days){
+     const side=w.progress>=0?A:B;
+
+     addEvent(
+       "Frontline Developments",
+       `${side.name} reports significant battlefield progress in the war between ${A.name} and ${B.name}.`,
+       "war"
+     );
+   }
+
+   if(w.progress>=100){
+     absorb(w.a,w.b,
+       `${A.name} achieves a decisive victory over ${B.name}; ${B.name} is occupied.`);
+   }
+
+   if(w.progress<=-100){
+     absorb(w.b,w.a,
+       `${B.name} defeats the forces of ${A.name} and imposes occupation.`);
+   }
+ }
+}
+
+function historicalEvents(){
+ const date=state.date;
+
+ function trigger(key,condition,fn){
+   if(!state.historical[key] && condition){
+     state.historical[key]=true;
+     fn();
+   }
+ }
+
+ trigger("rhineland",
+   date>="1936-03-07" && !state.defeated.DEU,
+   ()=>{
+     country("DEU").military+=2;
+     country("DEU").stability+=3;
+     state.tension+=4;
+
+     addEvent(
+       "Remilitarisation of the Rhineland",
+       "German troops enter the demilitarised Rhineland. Britain and France protest but do not immediately intervene.",
+       "politics"
+     );
+   });
+
+ trigger("spain",
+   date>="1936-07-17" && !state.defeated.ESP,
+   ()=>{
+     country("ESP").stability-=20;
+     country("ESP").military-=5;
+
+     addEvent(
+       "Spanish Civil War",
+       "Spain descends into civil war after a military uprising fractures the country.",
+       "war"
+     );
+   });
+
+ trigger("anschluss",
+   date>="1938-03-12" &&
+   !state.defeated.AUT &&
+   !state.defeated.DEU,
+   ()=>{
+     if(rel("DEU","AUT")>-50){
+       absorb("DEU","AUT",
+         "Political pressure culminates in the incorporation of Austria into Germany.");
+     }
+   });
+
+ trigger("munich",
+   date>="1938-09-29" &&
+   !state.defeated.CZE &&
+   !state.defeated.DEU,
+   ()=>{
+     country("CZE").defense-=2;
+     country("DEU").industry+=4;
+     state.tension+=6;
+
+     addEvent(
+       "Sudeten Crisis",
+       "German demands concerning Czechoslovakia create a major European diplomatic crisis.",
+       "diplomacy"
+     );
+   });
+
+ trigger("poland",
+   date>="1939-09-01" &&
+   !state.defeated.DEU &&
+   !state.defeated.POL,
+   ()=>{
+     if(!state.wars.some(w=>
+       (w.a==="DEU"&&w.b==="POL")||(w.a==="POL"&&w.b==="DEU"))){
+       declareWar("DEU","POL");
+     }
+   });
+
+ trigger("britainfrance",
+   date>="1939-09-03",
+   ()=>{
+     if(state.wars.some(w=>
+       (w.a==="DEU"&&w.b==="POL")||(w.a==="POL"&&w.b==="DEU"))){
+
+       if(!state.wars.some(w=>w.a==="DEU"&&w.b==="GBR"))
+         declareWar("DEU","GBR");
+
+       if(!state.wars.some(w=>w.a==="DEU"&&w.b==="FRA"))
+         declareWar("DEU","FRA");
+     }
+   });
+}
+
+function autonomousAI(days){
+ const majors=["DEU","GBR","FRA","RUS","ITA","USA","JPN"];
+
+ majors.forEach(code=>{
+   if(code===state.player || state.defeated[code])return;
+
+   const c=country(code);
+
+   // Gradual national development
+   c.treasury+=rand(.2,1.3)*(days/30);
+   c.industry+=rand(.05,.4)*(days/30);
+
+   if(Math.random()<.35){
+     if(c.treasury>20 && c.manpower>20){
+       c.treasury-=2;
+       c.manpower-=2;
+       c.military+=rand(.3,1.2)*(days/30+0.5);
+     }
+   }
+
+   if(Math.random()<.12*(days/30)){
+     const potential=Object.keys(state.countries)
+       .filter(x=>x!==code&&!state.defeated[x]);
+
+     const target=pick(potential);
+
+     if(rel(code,target)<-45 &&
+        c.military>country(target).military*1.5 &&
+        state.tension>35){
+
+       declareWar(code,target);
+     }
+   }
+ });
+
+ // Germany becomes increasingly revisionist.
+ if(!state.defeated.DEU && Math.random()<.12*(days/30)){
+   const choices=["POL","CZE","AUT","BEL","NLD","DNK"];
+   const target=choices.find(x=>!state.defeated[x]);
+
+   if(target){
+     addRel("DEU",target,-5);
+   }
+ }
+
+ // USSR pressure grows in eastern Europe.
+ if(!state.defeated.RUS && state.date>="1938-01-01"){
+   ["FIN","EST","LVA","LTU"].forEach(x=>{
+     if(!state.defeated[x] && Math.random()<.05*(days/30))
+       addRel("RUS",x,-4);
+   });
+ }
+}
+
+function passiveEconomy(days){
+ const m=days/30;
+
+ Object.keys(state.countries).forEach(code=>{
+   if(state.defeated[code])return;
+
+   const c=country(code);
+
+   c.treasury+=c.industry*.015*m;
+
+   if(c.stability<25)
+     c.industry-=.15*m;
+
+   c.stability=clamp(c.stability,0,100);
+   c.treasury=Math.max(0,c.treasury);
+ });
+}
+
+function jump(days){
+ if(!state.player)return;
+
+ document.getElementById("jumpOptions").style.display="none";
+
+ snapshot();
+
+ for(const action of state.actions)
+   resolveAction(action);
+
+ state.actions=[];
+
+ const d=D();
+ d.setDate(d.getDate()+days);
+ state.date=d.toISOString().slice(0,10);
+
+ state.round++;
+
+ passiveEconomy(days);
+ historicalEvents();
+ autonomousAI(days);
+ resolveWars(days);
+
+ state.tension=clamp(state.tension,0,100);
+
+ addEvent(
+   "Time Advances",
+   `${days} days pass. Governments reassess their positions as the international situation develops.`,
+   "world"
+ );
+
+ refreshAll();
+}
+
+function toggleJump(){
+ const j=document.getElementById("jumpOptions");
+ j.style.display=j.style.display==="block"?"none":"block";
+}
+
+function renderTimeline(){
+ const box=document.getElementById("timeline");
+
+ if(!state.events.length){
+   box.innerHTML=`
+   <div class="hint">
+   The timeline will record diplomatic crises, wars, treaties,
+   political changes and other major world events.
+   </div>`;
+   return;
+ }
+
+ box.innerHTML=state.events.map(e=>`
+ <div class="event ${e.type}">
+  <div class="eventDate">${new Date(e.date+"T12:00:00")
+   .toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"})}</div>
+  <div class="eventTitle">${esc(e.title)}</div>
+  <div class="eventText">${esc(e.text)}</div>
+ </div>
+ `).join("");
+}
+
+function refreshAll(){
+ refreshTop();
+ renderCountryHeader();
+ renderCountryList();
+ renderPanel();
+ renderTimeline();
+ restyleMap();
+}
+
+function mobile(view,btn){
+ document.querySelectorAll(".mobileNav button")
+ .forEach(x=>x.classList.remove("active"));
+
+ btn.classList.add("active");
+
+ const left=document.getElementById("left");
+ const right=document.getElementById("right");
+ const center=document.querySelector(".center");
+
+ if(view==="control"){
+   left.style.display="flex";
+   right.style.display="none";
+   center.style.display="block";
+ }
+
+ if(view==="timeline"){
+   left.style.display="none";
+   right.style.display="flex";
+   center.style.display="block";
+ }
+
+ if(view==="map"){
+   left.style.display="none";
+   right.style.display="none";
+   center.style.height="calc(100vh - 90px)";
+ }
+}
+
+/* =========================
+   MAP
+========================= */
+
+function initMap(){
+ map=L.map("map",{
+   zoomControl:true,
+   minZoom:2,
+   maxZoom:8
+ }).setView([51,15],4);
+
+ L.tileLayer(
+   "https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png",
+   {
+     maxZoom:19,
+     attribution:"© OpenStreetMap © CARTO"
+   }
+ ).addTo(map);
+
+ fetch("https://raw.githubusercontent.com/johan/world.geo.json/master/countries.geo.json")
+ .then(r=>r.json())
+ .then(data=>{
+   geoLayer=L.geoJSON(data,{
+     style:feature=>countryStyle(feature.id),
+
+     onEachFeature:(feature,layer)=>{
+       const code=feature.id;
+
+       layer.on({
+         click:()=>{
+           if(state.countries[code]){
+             state.selected=code;
+
+             if(currentTab==="diplomacy"||currentTab==="intel")
+               renderPanel();
+
+             layer.bindPopup(popupHTML(code)).openPopup();
+           }
+         }
+       });
+     }
+   }).addTo(map);
+
+   document.getElementById("mapNotice").style.display="none";
+   addCapitalMarkers();
+   restyleMap();
+ })
+ .catch(()=>{
+   document.getElementById("mapNotice").textContent=
+   "Political borders unavailable — capital map active.";
+   addCapitalMarkers();
+ });
+}
+
+function ownerOf(code){
+ return state.defeated[code] || code;
+}
+
+function countryStyle(code){
+ if(!state.countries[code]){
+   return{
+     fillColor:"#272b30",
+     color:"#51565e",
+     weight:.7,
+     fillOpacity:.6
+   };
+ }
+
+ const owner=ownerOf(code);
+ const c=country(owner);
+
+ return{
+   fillColor:COLORS[c?.ideology] || "#666",
+   color:"#c4c7cb",
+   weight:.85,
+   fillOpacity:.78
+ };
+}
+
+function restyleMap(){
+ if(geoLayer)
+   geoLayer.setStyle(f=>countryStyle(f.id));
+}
+
+function popupHTML(code){
+ const c=country(code);
+ if(!c)return "";
+
+ let occupied=state.defeated[code]
+   ? `<br><b>Occupied by ${country(state.defeated[code]).name}</b>`
+   :"";
+
+ let relationship=
+ state.player && state.player!==code
+ ? `<br>Relations: ${rel(state.player,code)}`
+ :"";
+
+ return `
+ <div style="min-width:150px">
+  <b>${c.flag} ${c.name}</b><br>
+  ${c.capital}<br>
+  ${c.ideology}<br>
+  Military: ${Math.round(c.military)}
+  ${relationship}
+  ${occupied}
+ </div>`;
+}
+
+function addCapitalMarkers(){
+ Object.keys(state.countries).forEach(code=>{
+   const c=country(code);
+
+   L.circleMarker(c.xy,{
+     radius:3.5,
+     color:"#e3c978",
+     fillColor:"#e3c978",
+     fillOpacity:1,
+     weight:1
+   })
+   .addTo(map)
+   .bindTooltip(c.capital,{
+     direction:"top",
+     opacity:.8
+   })
+   .on("click",()=>{
+     state.selected=code;
+     if(currentTab==="diplomacy"||currentTab==="intel")
+       renderPanel();
+   });
+ });
+}
+
+renderStart();
+refreshAll();
+initMap();
+
+window.addEventListener("resize",()=>{
+ setTimeout(()=>map?.invalidateSize(),100);
+});
+</script>
+
+</body>
+</html>
