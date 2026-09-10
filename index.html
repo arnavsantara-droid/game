@@ -3,25 +3,27 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HISTORIA: 1936 — Alternate History Grand Strategy</title>
+  <title>HISTORIA: 1936 — Deep Alternate-History Engine</title>
   <style>
-    /* --- CSS RESET & THEME --- */
+    /* ==========================================================================
+       THEME & DESIGN SYSTEM (PC Command-Center Aesthetic)
+       ========================================================================== */
     :root {
-      --bg-base: #0c0f12;
-      --bg-panel: #14181d;
-      --bg-panel-alt: #1a2027;
-      --bg-input: #0e1115;
-      --border-color: #2a333d;
-      --border-highlight: #3d4a58;
-      --text-main: #d1d5db;
-      --text-muted: #8b96a5;
+      --bg-base: #0a0d0f;
+      --bg-panel: #12161b;
+      --bg-panel-alt: #181e25;
+      --bg-input: #0c0f12;
+      --border-color: #242d38;
+      --border-highlight: #3b495a;
+      --text-main: #c4cad4;
+      --text-muted: #728092;
       --text-bright: #ffffff;
-      --accent-gold: #c6a052;
-      --accent-gold-hover: #e0b864;
-      --accent-red: #a83232;
-      --accent-green: #2e7d32;
-      --accent-blue: #2a6f97;
-      --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --accent-gold: #cca652;
+      --accent-gold-hover: #e6be65;
+      --accent-red: #b83636;
+      --accent-green: #2d8a4e;
+      --accent-blue: #3273a8;
+      --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
@@ -29,7 +31,7 @@
       background-color: var(--bg-base);
       color: var(--text-main);
       font-family: var(--font-family);
-      font-size: 13px;
+      font-size: 12px;
       line-height: 1.4;
       height: 100vh;
       overflow: hidden;
@@ -37,35 +39,35 @@
       flex-direction: column;
     }
 
-    /* --- START SCREEN / MODAL --- */
+    /* SETUP / LAUNCH SCREEN */
     #start-screen {
       position: fixed;
       inset: 0;
-      background: rgba(8, 10, 12, 0.95);
+      background: rgba(6, 8, 10, 0.96);
       z-index: 1000;
       display: flex;
       justify-content: center;
       align-items: center;
-      backdrop-filter: blur(8px);
+      backdrop-filter: blur(10px);
     }
     .setup-box {
       background: var(--bg-panel);
       border: 1px solid var(--accent-gold);
-      width: 820px;
-      max-width: 90vw;
+      width: 900px;
+      max-width: 92vw;
       padding: 30px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.9);
       display: flex;
       flex-direction: column;
       gap: 20px;
     }
-    .setup-header { border-bottom: 1px solid var(--border-color); padding-bottom: 15px; }
-    .setup-header h1 { font-size: 28px; color: var(--accent-gold); letter-spacing: 2px; font-weight: 700; }
-    .setup-header p { color: var(--text-muted); font-size: 13px; margin-top: 4px; }
+    .setup-header { border-bottom: 1px solid var(--border-color); padding-bottom: 12px; }
+    .setup-header h1 { font-size: 30px; color: var(--accent-gold); letter-spacing: 3px; font-weight: 800; }
+    .setup-header p { color: var(--text-muted); font-size: 12px; margin-top: 4px; }
     
-    .setup-options { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-    .option-group label { display: block; color: var(--text-bright); font-weight: 600; margin-bottom: 8px; text-transform: uppercase; font-size: 11px; letter-spacing: 1px; }
-    .option-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .setup-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .opt-group label { display: block; color: var(--text-bright); font-weight: 700; margin-bottom: 8px; text-transform: uppercase; font-size: 10px; letter-spacing: 1px; }
+    .opt-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
     .opt-btn {
       background: var(--bg-panel-alt);
       border: 1px solid var(--border-color);
@@ -75,18 +77,18 @@
       cursor: pointer;
       transition: all 0.2s;
     }
-    .opt-btn:hover { border-color: var(--border-highlight); background: #222933; }
-    .opt-btn.selected { border-color: var(--accent-gold); background: #282215; color: var(--accent-gold); }
-    .opt-btn strong { display: block; font-size: 12px; }
-    .opt-btn span { font-size: 10px; color: var(--text-muted); }
+    .opt-btn:hover { border-color: var(--border-highlight); background: #1e2630; }
+    .opt-btn.selected { border-color: var(--accent-gold); background: #2a2316; color: var(--accent-gold); }
+    .opt-btn strong { display: block; font-size: 11px; }
+    .opt-btn span { font-size: 9px; color: var(--text-muted); }
 
     .country-select-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
-      max-height: 200px;
+      gap: 8px;
+      max-height: 180px;
       overflow-y: auto;
-      padding-right: 5px;
+      padding-right: 4px;
     }
     .country-card {
       background: var(--bg-panel-alt);
@@ -98,16 +100,16 @@
       gap: 10px;
     }
     .country-card:hover { border-color: var(--border-highlight); }
-    .country-card.selected { border-color: var(--accent-gold); background: #282215; }
-    .flag-icon { width: 24px; height: 16px; background: #333; display: inline-block; border: 1px solid #000; flex-shrink: 0; }
+    .country-card.selected { border-color: var(--accent-gold); background: #2a2316; }
+    .flag-icon { width: 22px; height: 14px; background: #333; border: 1px solid #000; flex-shrink: 0; }
 
     .btn-start {
       background: var(--accent-gold);
       color: #000;
       border: none;
       padding: 14px;
-      font-weight: bold;
-      font-size: 14px;
+      font-weight: 800;
+      font-size: 13px;
       letter-spacing: 2px;
       cursor: pointer;
       text-transform: uppercase;
@@ -115,9 +117,9 @@
     }
     .btn-start:hover { background: var(--accent-gold-hover); }
 
-    /* --- LAYOUT STRUCTURE --- */
+    /* LAYOUT MATRIX */
     #top-bar {
-      height: 48px;
+      height: 46px;
       background: var(--bg-panel);
       border-bottom: 1px solid var(--border-color);
       display: flex;
@@ -126,34 +128,32 @@
       padding: 0 16px;
       z-index: 100;
     }
-    .logo-area { display: flex; align-items: center; gap: 12px; }
-    .logo-title { font-size: 16px; font-weight: bold; color: var(--accent-gold); letter-spacing: 1.5px; }
-    .date-display { font-size: 14px; font-weight: 600; color: var(--text-bright); background: var(--bg-input); padding: 4px 10px; border: 1px solid var(--border-color); }
-    .tension-display { font-size: 12px; color: var(--accent-red); font-weight: 600; display: flex; align-items: center; gap: 6px; }
+    .logo-area { display: flex; align-items: center; gap: 14px; }
+    .logo-title { font-size: 15px; font-weight: 800; color: var(--accent-gold); letter-spacing: 2px; }
+    .date-display { font-size: 13px; font-weight: 700; color: var(--text-bright); background: var(--bg-input); padding: 4px 10px; border: 1px solid var(--border-color); }
+    .tension-display { font-size: 11px; color: var(--accent-red); font-weight: 700; display: flex; align-items: center; gap: 6px; }
 
-    .top-controls { display: flex; align-items: center; gap: 8px; }
+    .top-controls { display: flex; align-items: center; gap: 6px; }
     .btn-action {
       background: var(--bg-panel-alt);
       border: 1px solid var(--border-color);
       color: var(--text-main);
-      padding: 6px 12px;
-      font-size: 11px;
-      font-weight: 600;
+      padding: 5px 10px;
+      font-size: 10px;
+      font-weight: 700;
       cursor: pointer;
       text-transform: uppercase;
     }
     .btn-action:hover { border-color: var(--accent-gold); color: var(--text-bright); }
-    .btn-action.active { background: var(--accent-gold); color: #000; border-color: var(--accent-gold); }
 
     #main-container {
       display: grid;
-      grid-template-columns: 340px 1fr 360px;
+      grid-template-columns: 360px 1fr 380px;
       flex: 1;
-      height: calc(100vh - 48px);
+      height: calc(100vh - 46px);
       overflow: hidden;
     }
 
-    /* --- LEFT PANEL --- */
     .panel {
       background: var(--bg-panel);
       border-right: 1px solid var(--border-color);
@@ -164,30 +164,26 @@
     .panel-right { border-right: none; border-left: 1px solid var(--border-color); }
 
     .country-header {
-      padding: 14px;
+      padding: 12px;
       background: var(--bg-panel-alt);
       border-bottom: 1px solid var(--border-color);
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
-    .country-info h2 { font-size: 16px; color: var(--text-bright); }
-    .country-info p { font-size: 11px; color: var(--text-muted); }
+    .country-info h2 { font-size: 15px; color: var(--text-bright); }
+    .country-info p { font-size: 10px; color: var(--text-muted); }
 
-    .tab-bar {
-      display: flex;
-      background: var(--bg-base);
-      border-bottom: 1px solid var(--border-color);
-    }
+    .tab-bar { display: flex; background: var(--bg-base); border-bottom: 1px solid var(--border-color); }
     .tab-btn {
       flex: 1;
-      padding: 10px 0;
+      padding: 8px 0;
       background: transparent;
       border: none;
       border-bottom: 2px solid transparent;
       color: var(--text-muted);
-      font-size: 11px;
-      font-weight: 600;
+      font-size: 10px;
+      font-weight: 700;
       cursor: pointer;
       text-transform: uppercase;
       text-align: center;
@@ -197,13 +193,13 @@
     .tab-content {
       flex: 1;
       overflow-y: auto;
-      padding: 14px;
+      padding: 12px;
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 12px;
     }
 
-    /* --- NATURAL LANGUAGE CONSOLE --- */
+    /* NATURAL LANGUAGE CONSOLE */
     .console-box {
       background: var(--bg-input);
       border: 1px solid var(--border-color);
@@ -212,43 +208,43 @@
       flex-direction: column;
       gap: 8px;
     }
-    .console-box label { font-size: 11px; font-weight: bold; color: var(--accent-gold); text-transform: uppercase; }
+    .console-box label { font-size: 10px; font-weight: bold; color: var(--accent-gold); text-transform: uppercase; letter-spacing: 1px; }
     .console-input {
       background: transparent;
       border: none;
       color: var(--text-bright);
       font-family: inherit;
-      font-size: 12px;
+      font-size: 11px;
       resize: none;
       outline: none;
-      height: 60px;
+      height: 65px;
     }
     .btn-submit-cmd {
       background: var(--accent-gold);
       color: #000;
       border: none;
-      padding: 8px;
+      padding: 7px 12px;
       font-weight: bold;
-      font-size: 11px;
+      font-size: 10px;
       cursor: pointer;
       text-transform: uppercase;
       align-self: flex-end;
     }
     .btn-submit-cmd:hover { background: var(--accent-gold-hover); }
 
-    /* --- DATA GRIDS & STATS --- */
-    .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    /* STAT GRIDS */
+    .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
     .stat-card {
       background: var(--bg-panel-alt);
       border: 1px solid var(--border-color);
-      padding: 8px;
+      padding: 7px;
     }
-    .stat-card .lbl { font-size: 10px; color: var(--text-muted); text-transform: uppercase; }
-    .stat-card .val { font-size: 14px; font-weight: bold; color: var(--text-bright); margin-top: 2px; }
+    .stat-card .lbl { font-size: 9px; color: var(--text-muted); text-transform: uppercase; }
+    .stat-card .val { font-size: 13px; font-weight: bold; color: var(--text-bright); margin-top: 2px; }
 
-    /* --- CENTER CENTER: MAP --- */
+    /* MAP CONTAINER */
     #map-container {
-      background: #090c0e;
+      background: #080b0e;
       position: relative;
       display: flex;
       justify-content: center;
@@ -257,70 +253,71 @@
     }
     #world-map { width: 100%; height: 100%; }
     .region-path {
-      stroke: #1a2027;
-      stroke-width: 1.5;
+      stroke: #182028;
+      stroke-width: 1.2;
       cursor: pointer;
-      transition: fill 0.2s, stroke 0.2s;
+      transition: fill 0.25s, stroke 0.25s;
     }
-    .region-path:hover { stroke: var(--accent-gold); stroke-width: 2.5; z-index: 10; }
+    .region-path:hover { stroke: var(--accent-gold); stroke-width: 2.2; z-index: 10; }
     .region-path.contested { stroke: var(--accent-red); stroke-dasharray: 4; }
 
     .map-overlay-info {
       position: absolute;
-      bottom: 20px;
-      left: 20px;
-      background: rgba(20, 24, 29, 0.9);
+      bottom: 16px;
+      left: 16px;
+      background: rgba(18, 22, 27, 0.92);
       border: 1px solid var(--border-color);
-      padding: 12px;
+      padding: 10px 14px;
       pointer-events: none;
-      max-width: 280px;
+      max-width: 300px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
     }
-    .map-overlay-info h3 { font-size: 13px; color: var(--accent-gold); }
-    .map-overlay-info p { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+    .map-overlay-info h3 { font-size: 12px; color: var(--accent-gold); }
+    .map-overlay-info p { font-size: 10px; color: var(--text-muted); margin-top: 3px; }
 
-    /* --- RIGHT PANEL: GAZETTE & OPERATIONS --- */
+    /* TIMELINE GAZETTE */
     .section-title {
-      font-size: 11px;
+      font-size: 10px;
       font-weight: bold;
       color: var(--accent-gold);
       text-transform: uppercase;
       letter-spacing: 1px;
       border-bottom: 1px solid var(--border-color);
       padding-bottom: 4px;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
-    .timeline-feed { display: flex; flex-direction: column; gap: 10px; overflow-y: auto; flex: 1; }
+    .timeline-feed { display: flex; flex-direction: column; gap: 8px; overflow-y: auto; flex: 1; }
     .news-card {
       background: var(--bg-panel-alt);
       border-left: 3px solid var(--accent-gold);
-      padding: 10px;
+      padding: 8px 10px;
       border-top: 1px solid var(--border-color);
       border-right: 1px solid var(--border-color);
       border-bottom: 1px solid var(--border-color);
     }
     .news-card.war { border-left-color: var(--accent-red); }
     .news-card.diplomacy { border-left-color: var(--accent-blue); }
-    .news-card .news-date { font-size: 10px; color: var(--text-muted); font-weight: 600; }
-    .news-card .news-title { font-size: 12px; font-weight: bold; color: var(--text-bright); margin: 2px 0; }
-    .news-card .news-body { font-size: 11px; color: var(--text-main); }
-    .news-card .news-effects { font-size: 10px; color: var(--accent-gold); margin-top: 6px; font-style: italic; }
+    .news-card.economy { border-left-color: var(--accent-green); }
+    .news-card .news-date { font-size: 9px; color: var(--text-muted); font-weight: 600; }
+    .news-card .news-title { font-size: 11px; font-weight: bold; color: var(--text-bright); margin: 2px 0; }
+    .news-card .news-body { font-size: 10px; color: var(--text-main); }
+    .news-card .news-effects { font-size: 9px; color: var(--accent-gold); margin-top: 4px; font-style: italic; }
 
     .op-card {
       background: var(--bg-panel-alt);
       border: 1px solid var(--border-color);
-      padding: 10px;
-      margin-bottom: 8px;
+      padding: 8px;
     }
-    .op-card .op-head { display: flex; justify-content: space-between; font-weight: bold; font-size: 11px; color: var(--text-bright); }
-    .op-card .op-prog { height: 4px; background: var(--bg-input); margin: 6px 0; overflow: hidden; }
+    .op-card .op-head { display: flex; justify-content: space-between; font-weight: bold; font-size: 10px; color: var(--text-bright); }
+    .op-card .op-prog { height: 4px; background: var(--bg-input); margin: 5px 0; overflow: hidden; }
     .op-card .op-bar { height: 100%; background: var(--accent-gold); width: 0%; transition: width 0.3s; }
-    .op-card .op-desc { font-size: 10px; color: var(--text-muted); }
+    .op-card .op-desc { font-size: 9px; color: var(--text-muted); }
 
-    /* DIPLOMACY DIALOGUE MODAL */
+    /* DIPLOMATIC MODAL */
     #dip-modal {
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.8);
+      background: rgba(0,0,0,0.85);
       z-index: 500;
       display: none;
       justify-content: center;
@@ -329,14 +326,14 @@
     .dip-box {
       background: var(--bg-panel);
       border: 1px solid var(--accent-gold);
-      width: 600px;
+      width: 620px;
       padding: 20px;
       display: flex;
       flex-direction: column;
       gap: 12px;
     }
     .dip-chat {
-      height: 200px;
+      height: 220px;
       background: var(--bg-input);
       border: 1px solid var(--border-color);
       overflow-y: auto;
@@ -345,12 +342,11 @@
       flex-direction: column;
       gap: 8px;
     }
-    .chat-msg { padding: 6px 10px; border-radius: 2px; max-width: 80%; font-size: 11px; }
-    .chat-msg.them { background: #222a35; align-self: flex-start; border-left: 2px solid var(--accent-gold); }
-    .chat-msg.me { background: #1b382b; align-self: flex-end; border-right: 2px solid var(--accent-green); }
+    .chat-msg { padding: 6px 10px; border-radius: 2px; max-width: 85%; font-size: 11px; }
+    .chat-msg.them { background: #1c242d; align-self: flex-start; border-left: 3px solid var(--accent-gold); }
+    .chat-msg.me { background: #152b20; align-self: flex-end; border-right: 3px solid var(--accent-green); }
 
-    /* UTILITY Scrollbars */
-    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-track { background: var(--bg-base); }
     ::-webkit-scrollbar-thumb { background: var(--border-color); }
     ::-webkit-scrollbar-thumb:hover { background: var(--border-highlight); }
@@ -358,64 +354,62 @@
 </head>
 <body>
 
-  <!-- START SETUP SCREEN -->
+  <!-- START SETUP MODAL -->
   <div id="start-screen">
     <div class="setup-box">
       <div class="setup-header">
         <h1>HISTORIA: 1936</h1>
-        <p>A Causal Alternate-History Grand Strategy Sandbox</p>
+        <p>A Causal Alternate-History Grand Strategy Engine</p>
       </div>
 
-      <div class="setup-options">
-        <div class="option-group">
-          <label>World Simulation Mode</label>
-          <div class="option-grid">
+      <div class="setup-grid">
+        <div class="opt-group">
+          <label>World Simulation Engine</label>
+          <div class="opt-grid">
             <button class="opt-btn selected" onclick="setMode('historical', this)">
               <strong>Historical Sandbox</strong>
-              <span>Historical pressures exist; AI free to diverge logically.</span>
+              <span>Pressures exist; AI diverges organically based on incentives.</span>
             </button>
             <button class="opt-btn" onclick="setMode('wild', this)">
               <strong>Wild Alternate</strong>
-              <span>AI takes highly unpredictable, radical geopolitical paths.</span>
+              <span>High volatility; AI pursues unconventional alliances.</span>
             </button>
           </div>
         </div>
 
-        <div class="option-group">
-          <label>AI Competence / Difficulty</label>
-          <div class="option-grid">
+        <div class="opt-group">
+          <label>AI Competence / Strategy</label>
+          <div class="opt-grid">
             <button class="opt-btn" onclick="setDiff('forgiving', this)">
               <strong>Forgiving</strong>
-              <span>Slower AI response times.</span>
+              <span>Slower AI mobilization.</span>
             </button>
             <button class="opt-btn selected" onclick="setDiff('normal', this)">
               <strong>Normal</strong>
-              <span>Realistic strategic calculations.</span>
+              <span>Calculated geopolitical balancing.</span>
             </button>
             <button class="opt-btn" onclick="setDiff('hard', this)">
               <strong>Hard</strong>
-              <span>Aggressive coalition balancing.</span>
+              <span>Aggressive coalition building.</span>
             </button>
             <button class="opt-btn" onclick="setDiff('ruthless', this)">
               <strong>Ruthless</strong>
-              <span>Zero-error opportunistic AI.</span>
+              <span>Zero-error opportunistic reactions.</span>
             </button>
           </div>
         </div>
       </div>
 
-      <div class="option-group">
-        <label>Select Player Nation</label>
-        <div class="country-select-grid" id="country-select">
-          <!-- Populated by JS -->
-        </div>
+      <div class="opt-group">
+        <label>Select Sovereign Power</label>
+        <div class="country-select-grid" id="country-select"></div>
       </div>
 
-      <button class="btn-start" onclick="startGame()">Commence Simulation — 1 Jan 1936</button>
+      <button class="btn-start" onclick="startGame()">Initiate World Simulation — 1 Jan 1936</button>
     </div>
   </div>
 
-  <!-- MAIN TOP NAVIGATION -->
+  <!-- NAVIGATION BAR -->
   <div id="top-bar">
     <div class="logo-area">
       <span class="logo-title">HISTORIA 1936</span>
@@ -437,10 +431,10 @@
     </div>
   </div>
 
-  <!-- MAIN CONTENT LAYOUT -->
+  <!-- MAIN ENGINE GRID -->
   <div id="main-container">
     
-    <!-- LEFT PANEL: NATIONAL COMMAND CENTER -->
+    <!-- LEFT PANEL: POLICY & DIRECTIVES -->
     <div class="panel">
       <div class="country-header">
         <div class="country-info">
@@ -457,104 +451,97 @@
         <button class="tab-btn" onclick="switchTab('military')">Military</button>
       </div>
 
-      <!-- TAB: ACTIONS / NATURAL LANGUAGE CONSOLE -->
+      <!-- TAB 1: NATURAL LANGUAGE CONSOLE -->
       <div id="tab-actions" class="tab-content">
         <div class="console-box">
-          <label>Natural-Language Command Console</label>
-          <textarea id="cmd-input" class="console-input" placeholder="e.g., Bring 500,000 men into the army, prioritise younger men, keep factory workers exempt, complete in 18 months..."></textarea>
+          <label>Free-Form Command Console</label>
+          <textarea id="cmd-input" class="console-input" placeholder="e.g. Conscript 500000 men over 12 months keep factory workers exempt, move two divisions to Rhineland, cut military salaries by 5%..."></textarea>
           <button class="btn-submit-cmd" onclick="submitCommand()">Issue Directives</button>
         </div>
 
-        <div class="section-title">Active Policies & Operations</div>
-        <div id="active-ops-list">
-          <!-- Populated by JS -->
-        </div>
+        <div class="section-title">Active Programmes & Operations</div>
+        <div id="active-ops-list"></div>
       </div>
 
-      <!-- TAB: DIPLOMACY -->
+      <!-- TAB 2: DIPLOMACY -->
       <div id="tab-diplomacy" class="tab-content" style="display:none;">
-        <div class="section-title">International Memory & Relations</div>
-        <div id="diplomacy-list" style="display:flex; flex-direction:column; gap:8px;">
-          <!-- Populated by JS -->
-        </div>
+        <div class="section-title">Sovereign Relations & Memory</div>
+        <div id="diplomacy-list" style="display:flex; flex-direction:column; gap:6px;"></div>
       </div>
 
-      <!-- TAB: STATE & ECONOMY -->
+      <!-- TAB 3: ECONOMY -->
       <div id="tab-state" class="tab-content" style="display:none;">
-        <div class="section-title">Macroeconomic Balance</div>
+        <div class="section-title">Macroeconomic Metrics</div>
         <div class="stat-grid">
-          <div class="stat-card"><div class="lbl">GDP (Bn $)</div><div class="val" id="val-gdp">0</div></div>
-          <div class="stat-card"><div class="lbl">Treasury ($M)</div><div class="val" id="val-treasury">0</div></div>
+          <div class="stat-card"><div class="lbl">GDP ($ Bn)</div><div class="val" id="val-gdp">0</div></div>
+          <div class="stat-card"><div class="lbl">Treasury ($ M)</div><div class="val" id="val-treasury">0</div></div>
           <div class="stat-card"><div class="lbl">Ind. Workforce</div><div class="val" id="val-ind-work">0%</div></div>
           <div class="stat-card"><div class="lbl">Civilian Output</div><div class="val" id="val-civ-out">0%</div></div>
-          <div class="stat-card"><div class="lbl">Fuel Reserves</div><div class="val" id="val-fuel">0k tons</div></div>
-          <div class="stat-card"><div class="lbl">Food Reserves</div><div class="val" id="val-food">100%</div></div>
+          <div class="stat-card"><div class="lbl">Fuel Reserve</div><div class="val" id="val-fuel">0k</div></div>
+          <div class="stat-card"><div class="lbl">Food Surplus</div><div class="val" id="val-food">100%</div></div>
         </div>
-        <div class="section-title" style="margin-top:10px;">Political Metrics</div>
+        <div class="section-title" style="margin-top:8px;">Sociopolitical Stability</div>
         <div class="stat-grid">
           <div class="stat-card"><div class="lbl">Stability</div><div class="val" id="val-stability">0%</div></div>
           <div class="stat-card"><div class="lbl">War Support</div><div class="val" id="val-warsupport">0%</div></div>
         </div>
       </div>
 
-      <!-- TAB: MILITARY -->
+      <!-- TAB 4: MILITARY -->
       <div id="tab-military" class="tab-content" style="display:none;">
-        <div class="section-title">Armed Forces Overview</div>
+        <div class="section-title">Armed Forces Preparedness</div>
         <div class="stat-grid">
-          <div class="stat-card"><div class="lbl">Army Strength</div><div class="val" id="val-army">0 men</div></div>
-          <div class="stat-card"><div class="lbl">Manpower Pool</div><div class="val" id="val-manpower">0</div></div>
+          <div class="stat-card"><div class="lbl">Active Personnel</div><div class="val" id="val-army">0</div></div>
+          <div class="stat-card"><div class="lbl">Manpower Reserve</div><div class="val" id="val-manpower">0</div></div>
           <div class="stat-card"><div class="lbl">Equipment Stock</div><div class="val" id="val-eq">0%</div></div>
           <div class="stat-card"><div class="lbl">Training Quality</div><div class="val" id="val-qual">0%</div></div>
         </div>
       </div>
     </div>
 
-    <!-- CENTER PANEL: MAP -->
+    <!-- CENTER MAP CONTAINER -->
     <div id="map-container">
       <svg id="world-map" viewBox="0 0 1000 650">
-        <!-- SVG Paths for Key 1936 Nations/Regions -->
         <g id="regions-layer"></g>
       </svg>
 
       <div class="map-overlay-info" id="map-hover-info">
         <h3 id="hover-region-name">Select Region</h3>
-        <p id="hover-region-detail">Hover or click on territory to view strategic regional data.</p>
+        <p id="hover-region-detail">Hover over or click strategic territory to inspect resource & military data.</p>
       </div>
     </div>
 
-    <!-- RIGHT PANEL: TIMELINE & GAZETTE -->
+    <!-- RIGHT PANEL: GAZETTE & CAUSAL INTELLIGENCE -->
     <div class="panel panel-right">
-      <div style="padding:14px; border-bottom:1px solid var(--border-color); background:var(--bg-panel-alt);">
-        <div class="section-title" style="margin:0;">World Gazette & Causal Intelligence</div>
+      <div style="padding:10px; border-bottom:1px solid var(--border-color); background:var(--bg-panel-alt);">
+        <div class="section-title" style="margin:0;">World Intelligence Gazette</div>
       </div>
       <div class="tab-content">
-        <div class="timeline-feed" id="timeline-feed">
-          <!-- Populated by JS -->
-        </div>
+        <div class="timeline-feed" id="timeline-feed"></div>
       </div>
     </div>
 
   </div>
 
-  <!-- DIPLOMATIC CHAT MODAL -->
+  <!-- DIPLOMATIC TALKS MODAL -->
   <div id="dip-modal">
     <div class="dip-box">
       <div class="country-header" style="padding:0; background:transparent; border:none;">
         <div class="country-info">
-          <h2 id="dip-modal-title">Negotiations with UK</h2>
-          <p id="dip-modal-sub">Trust: 50 | Hostility: Low | Strategic Alignment: Neutral</p>
+          <h2 id="dip-modal-title">Negotiations</h2>
+          <p id="dip-modal-sub">Trust & Strategic Memory Matrix</p>
         </div>
-        <button class="btn-action" onclick="closeDipModal()">Close</button>
+        <button class="btn-action" onclick="closeDipModal()">Conclude</button>
       </div>
       <div class="dip-chat" id="dip-chat-history"></div>
-      <div style="display:flex; gap:8px;">
-        <input type="text" id="dip-chat-input" style="flex:1; background:var(--bg-input); border:1px solid var(--border-color); color:#fff; padding:8px; font-size:11px;" placeholder="Type diplomatic offer or threat...">
-        <button class="btn-submit-cmd" onclick="sendDiplomaticMessage()">Send</button>
+      <div style="display:flex; gap:6px;">
+        <input type="text" id="dip-chat-input" style="flex:1; background:var(--bg-input); border:1px solid var(--border-color); color:#fff; padding:6px 10px; font-size:11px;" placeholder="Propose non-aggression pact, trade deal, or issue ultimatum...">
+        <button class="btn-submit-cmd" onclick="sendDiplomaticMessage()">Dispatch</button>
       </div>
     </div>
   </div>
 
-  <!-- GAME ENGINE JAVASCRIPT -->
+  <!-- CORE SIMULATION ENGINE SCRIPT -->
   <script>
     /* ==========================================================================
        1. DATA STRUCTURES & WORLD STATE
@@ -568,20 +555,20 @@
       checkpointStack: [],
       
       countries: {
-        GER: { name: 'Germany', leader: 'Adolf Hitler', ideology: 'Fascist', color: '#4a525d', gdp: 48, treasury: 1200, manpower: 4200000, army: 750000, indWorkforce: 0.45, civOutput: 0.60, fuel: 800, food: 95, stability: 78, warSupport: 68, eqStock: 85, quality: 80, trust: {}, hostility: {}, threatPerception: 30 },
-        GBR: { name: 'United Kingdom', leader: 'Neville Chamberlain', ideology: 'Democratic', color: '#c24242', gdp: 55, treasury: 2400, manpower: 3800000, army: 400000, indWorkforce: 0.40, civOutput: 0.75, fuel: 2500, food: 90, stability: 88, warSupport: 35, eqStock: 90, quality: 85, trust: {}, hostility: {}, threatPerception: 45 },
-        FRA: { name: 'France', leader: 'Albert Lebrun', ideology: 'Democratic', color: '#3252a8', gdp: 38, treasury: 1100, manpower: 3100000, army: 600000, indWorkforce: 0.38, civOutput: 0.65, fuel: 600, food: 100, stability: 52, warSupport: 40, eqStock: 75, quality: 75, trust: {}, hostility: {}, threatPerception: 65 },
-        SOV: { name: 'Soviet Union', leader: 'Joseph Stalin', ideology: 'Communist', color: '#9e2a2a', gdp: 42, treasury: 900, manpower: 12000000, army: 1300000, indWorkforce: 0.30, civOutput: 0.50, fuel: 3000, food: 85, stability: 65, warSupport: 75, eqStock: 60, quality: 60, trust: {}, hostility: {}, threatPerception: 50 },
-        ITA: { name: 'Italy', leader: 'Benito Mussolini', ideology: 'Fascist', color: '#38734b', gdp: 22, treasury: 500, manpower: 2500000, army: 500000, indWorkforce: 0.28, civOutput: 0.60, fuel: 200, food: 80, stability: 68, warSupport: 62, eqStock: 65, quality: 65, trust: {}, hostility: {}, threatPerception: 35 },
-        POL: { name: 'Poland', leader: 'Ignacy Mościcki', ideology: 'Non-Aligned', color: '#a3843b', gdp: 14, treasury: 300, manpower: 1800000, army: 350000, indWorkforce: 0.20, civOutput: 0.80, fuel: 150, food: 95, stability: 70, warSupport: 60, eqStock: 55, quality: 70, trust: {}, hostility: {}, threatPerception: 75 },
-        AUS: { name: 'Austria', leader: 'Kurt Schuschnigg', ideology: 'Non-Aligned', color: '#7a6851', gdp: 6, treasury: 120, manpower: 400000, army: 60000, indWorkforce: 0.25, civOutput: 0.75, fuel: 50, food: 90, stability: 55, warSupport: 30, eqStock: 50, quality: 65, trust: {}, hostility: {}, threatPerception: 80 },
-        CZE: { name: 'Czechoslovakia', leader: 'Edvard Beneš', ideology: 'Democratic', color: '#8f4f9e', gdp: 12, treasury: 280, manpower: 1100000, army: 250000, indWorkforce: 0.35, civOutput: 0.65, fuel: 80, food: 90, stability: 82, warSupport: 70, eqStock: 85, quality: 80, trust: {}, hostility: {}, threatPerception: 85 }
+        GER: { name: 'Germany', leader: 'Adolf Hitler', ideology: 'Fascist', color: '#4d5660', gdp: 48, treasury: 1200, manpower: 4200000, army: 750000, indWorkforce: 0.45, civOutput: 0.60, fuel: 800, food: 95, stability: 78, warSupport: 68, eqStock: 85, quality: 80, trust: {}, hostility: {}, threatPerception: 30, promisesMade: [], treatiesBroken: [] },
+        GBR: { name: 'United Kingdom', leader: 'Neville Chamberlain', ideology: 'Democratic', color: '#b53c3c', gdp: 55, treasury: 2400, manpower: 3800000, army: 400000, indWorkforce: 0.40, civOutput: 0.75, fuel: 2500, food: 90, stability: 88, warSupport: 35, eqStock: 90, quality: 85, trust: {}, hostility: {}, threatPerception: 45, promisesMade: [], treatiesBroken: [] },
+        FRA: { name: 'France', leader: 'Albert Lebrun', ideology: 'Democratic', color: '#335299', gdp: 38, treasury: 1100, manpower: 3100000, army: 600000, indWorkforce: 0.38, civOutput: 0.65, fuel: 600, food: 100, stability: 52, warSupport: 40, eqStock: 75, quality: 75, trust: {}, hostility: {}, threatPerception: 65, promisesMade: [], treatiesBroken: [] },
+        SOV: { name: 'Soviet Union', leader: 'Joseph Stalin', ideology: 'Communist', color: '#992828', gdp: 42, treasury: 900, manpower: 12000000, army: 1300000, indWorkforce: 0.30, civOutput: 0.50, fuel: 3000, food: 85, stability: 65, warSupport: 75, eqStock: 60, quality: 60, trust: {}, hostility: {}, threatPerception: 50, promisesMade: [], treatiesBroken: [] },
+        ITA: { name: 'Italy', leader: 'Benito Mussolini', ideology: 'Fascist', color: '#356e47', gdp: 22, treasury: 500, manpower: 2500000, army: 500000, indWorkforce: 0.28, civOutput: 0.60, fuel: 200, food: 80, stability: 68, warSupport: 62, eqStock: 65, quality: 65, trust: {}, hostility: {}, threatPerception: 35, promisesMade: [], treatiesBroken: [] },
+        POL: { name: 'Poland', leader: 'Ignacy Mościcki', ideology: 'Non-Aligned', color: '#9e813a', gdp: 14, treasury: 300, manpower: 1800000, army: 350000, indWorkforce: 0.20, civOutput: 0.80, fuel: 150, food: 95, stability: 70, warSupport: 60, eqStock: 55, quality: 70, trust: {}, hostility: {}, threatPerception: 75, promisesMade: [], treatiesBroken: [] },
+        AUS: { name: 'Austria', leader: 'Kurt Schuschnigg', ideology: 'Non-Aligned', color: '#786650', gdp: 6, treasury: 120, manpower: 400000, army: 60000, indWorkforce: 0.25, civOutput: 0.75, fuel: 50, food: 90, stability: 55, warSupport: 30, eqStock: 50, quality: 65, trust: {}, hostility: {}, threatPerception: 80, promisesMade: [], treatiesBroken: [] },
+        CZE: { name: 'Czechoslovakia', leader: 'Edvard Beneš', ideology: 'Democratic', color: '#884996', gdp: 12, treasury: 280, manpower: 1100000, army: 250000, indWorkforce: 0.35, civOutput: 0.65, fuel: 80, food: 90, stability: 82, warSupport: 70, eqStock: 85, quality: 80, trust: {}, hostility: {}, threatPerception: 85, promisesMade: [], treatiesBroken: [] }
       },
 
       regions: {
         'Rhineland': { owner: 'GER', controller: 'GER', path: 'M 160 210 L 190 200 L 185 240 L 155 245 Z', fortified: false, IC: 8 },
         'Bavaria': { owner: 'GER', controller: 'GER', path: 'M 190 200 L 230 205 L 225 240 L 185 240 Z', fortified: false, IC: 6 },
-        'Prussia': { owner: 'GER', controller: 'GER', path: 'M 230 160 L 280 155 L 270 190 L 230 180 Z', fortified: false, IC: 10 },
+        'Berlin_Prussia': { owner: 'GER', controller: 'GER', path: 'M 230 160 L 280 155 L 270 190 L 230 180 Z', fortified: false, IC: 12 },
         'Alsace': { owner: 'FRA', controller: 'FRA', path: 'M 130 220 L 160 210 L 155 245 L 125 240 Z', fortified: true, IC: 5 },
         'Paris_Region': { owner: 'FRA', controller: 'FRA', path: 'M 80 200 L 130 220 L 125 260 L 75 240 Z', fortified: false, IC: 14 },
         'Warsaw_Region': { owner: 'POL', controller: 'POL', path: 'M 280 170 L 340 175 L 330 220 L 270 210 Z', fortified: false, IC: 6 },
@@ -595,7 +582,7 @@
       targetDipCountry: null
     };
 
-    /* Initialize Diplomatic Trust Matrix */
+    /* Initialize Diplomatic Trust & Hostility Matrix */
     Object.keys(GAME.countries).forEach(c1 => {
       Object.keys(GAME.countries).forEach(c2 => {
         if (c1 !== c2) {
@@ -606,111 +593,108 @@
     });
 
     /* ==========================================================================
-       2. NATURAL-LANGUAGE COMMAND ENGINE (INTENT PARSER)
+       2. COMPOSABLE NATURAL LANGUAGE INTENT PARSER
        ========================================================================== */
     function parseNaturalCommand(rawText) {
       const text = rawText.toLowerCase();
       const intent = {
-        type: 'UNKNOWN',
-        scale: 1.0,
+        type: 'GENERAL_ORDER',
+        amount: null,
         targetCountry: null,
         targetRegion: null,
-        durationMonths: 12,
         exemptions: [],
         conditional: null,
         raw: rawText
       };
 
-      // Extract numbers for manpower or timelines
       const numbers = text.match(/\d+/g);
-      const numVal = numbers ? parseInt(numbers[0]) : null;
+      if (numbers) intent.amount = parseInt(numbers[0]);
 
-      // Identify Target Country
+      // Target Country Detection
       Object.keys(GAME.countries).forEach(code => {
         if (text.includes(GAME.countries[code].name.toLowerCase())) intent.targetCountry = code;
       });
 
-      // Identify Target Region
+      // Target Region Detection
       Object.keys(GAME.regions).forEach(reg => {
         if (text.includes(reg.toLowerCase())) intent.targetRegion = reg;
       });
 
-      // Parse Intent Types
-      if (text.includes('conscript') || text.includes('bring') || text.includes('mobilise') || text.includes('draft')) {
+      // Parse Specific Directive Intention
+      if (text.includes('conscript') || text.includes('mobilise') || text.includes('draft') || text.includes('bring')) {
         intent.type = 'CONSCRIPT';
-        intent.amount = numVal ? (numVal > 1000 ? numVal : numVal * 1000) : 300000;
+        intent.amount = intent.amount ? (intent.amount > 1000 ? intent.amount : intent.amount * 1000) : 300000;
         if (text.includes('factory') || text.includes('skilled') || text.includes('workers exempt')) {
           intent.exemptions.push('skilled_workers');
         }
-        if (text.includes('month')) intent.durationMonths = numVal || 12;
       } 
-      else if (text.includes('move') || text.includes('deploy') || text.includes('station')) {
+      else if (text.includes('move') || text.includes('deploy') || text.includes('station') || text.includes('redeploy')) {
         intent.type = 'DEPLOY_REGION';
-        if (text.includes('retreat if')) intent.conditional = 'RETREAT_ON_THREAT';
+        if (text.includes('retreat if') || text.includes('do not fire')) intent.conditional = 'CONDITIONAL_DEPLOYMENT';
       }
-      else if (text.includes('fortify') || text.includes('fortification')) {
+      else if (text.includes('fortify') || text.includes('fortification') || text.includes('defensive line')) {
         intent.type = 'BUILD_FORTIFICATION';
       }
-      else if (text.includes('fund') || text.includes('subsidise') || text.includes('overthrow') || text.includes('destabilise')) {
+      else if (text.includes('fund') || text.includes('subsidise') || text.includes('overthrow') || text.includes('destabilise') || text.includes('covert')) {
         intent.type = 'COVERT_SUBVERSION';
       }
-      else if (text.includes('trade') || text.includes('buy oil') || text.includes('import')) {
-        intent.type = 'TRADE_AGREEMENT';
+      else if (text.includes('salary') || text.includes('salaries') || text.includes('cut budget') || text.includes('pay')) {
+        intent.type = 'BUDGET_ADJUSTMENT';
       }
-      else if (text.includes('non-aggression') || text.includes('pact') || text.includes('guarantee')) {
-        intent.type = 'DIPLOMATIC_PACT';
+      else if (text.includes('invade') || text.includes('attack') || text.includes('declare war')) {
+        intent.type = 'DECLARE_WAR';
       }
 
       return intent;
     }
 
     /* ==========================================================================
-       3. GENERAL CONSEQUENCE ENGINE & POLICY RESOLUTION
+       3. GENERAL CONSEQUENCE ENGINE (Causal Ripple Resolution)
        ========================================================================== */
     function executeCommandIntent(intent) {
       const p = GAME.countries[GAME.playerCountry];
 
       if (intent.type === 'CONSCRIPT') {
         const hasExemptions = intent.exemptions.includes('skilled_workers');
+        const months = 12;
         const policy = {
           id: 'conscription_' + Date.now(),
-          title: `Mobilisation Directive (${(intent.amount/1000).toFixed(0)}k men)`,
-          duration: intent.durationMonths * 30,
+          title: `Mobilisation Directive (${(intent.amount/1000).toFixed(0)}k personnel)`,
+          duration: months * 30,
           elapsed: 0,
           tickEffect: () => {
-            const dailyRecruits = intent.amount / (intent.durationMonths * 30);
+            const dailyRecruits = intent.amount / (months * 30);
             p.army += dailyRecruits;
-            p.manpower -= dailyRecruits;
+            p.manpower = Math.max(0, p.manpower - dailyRecruits);
             
-            // 2nd & 3rd order impacts
-            const indDrain = hasExemptions ? 0.00005 : 0.0002;
-            p.indWorkforce = Math.max(0.15, p.indWorkforce - indDrain);
+            // Causal 2nd & 3rd order impacts
+            const indDrain = hasExemptions ? 0.00004 : 0.00018;
+            p.indWorkforce = Math.max(0.12, p.indWorkforce - indDrain);
             p.civOutput = Math.max(0.20, p.civOutput - 0.0001);
-            p.treasury -= 1.5; // Daily military maintenance cost increase
-            p.stability = Math.max(20, p.stability - 0.01);
+            p.treasury -= 1.8;
+            p.stability = Math.max(15, p.stability - 0.012);
 
-            // World reaction: Neighbours increase threat perception
+            // Foreign Threat Perception Reaction
             Object.keys(GAME.countries).forEach(code => {
               if (code !== GAME.playerCountry) {
-                GAME.countries[code].threatPerception = Math.min(100, GAME.countries[code].threatPerception + 0.02);
+                GAME.countries[code].threatPerception = Math.min(100, GAME.countries[code].threatPerception + 0.025);
               }
             });
           },
-          completionMessage: `Conscription directive completed. Army expanded by ${intent.amount} men.`
+          completionMessage: `Conscription directive completed. Army augmented by ${intent.amount.toLocaleString()} personnel.`
         };
         GAME.activePolicies.push(policy);
-        addNewsCard('MILITARY DIRECTIVE ISSUED', `${p.name} has initiated a mass mobilization plan targeting ${intent.amount.toLocaleString()} recruits over${intent.durationMonths} months.`, 'diplomacy', 'Industrial workforce & treasury expenditure will experience sustained pressure.');
+        addNewsCard('MOBILISATION DIRECTIVE ISSUED', `${p.name} initiated aggressive personnel mobilization targeting ${intent.amount.toLocaleString()} recruits. ${hasExemptions ? 'Factory worker exemption enabled.' : 'Industrial labor unexempted.'}`, 'economy', 'Consequences: Industrial workforce ↓, Military expenditure ↑, Sovereign threat perception ↑.');
       }
       else if (intent.type === 'DEPLOY_REGION' && intent.targetRegion) {
-        const reg = GAME.regions[intent.targetRegion];
-        addNewsCard('TROOP MOVEMENTS DETECTED', `${p.name} forces have repositioned into the${intent.targetRegion} strategic corridor.`, 'war', `Neighbouring powers are evaluating this escalation.`);
+        addNewsCard('TROOP REPOSITIONING', `${p.name} forces redeployed into ${intent.targetRegion}. ${intent.conditional ? 'Conditional rules of engagement enabled.' : ''}`, 'war', 'Bordering foreign intelligence services notified.');
         
-        // Dynamic AI Reaction
+        // Dynamic Strategic Reactions
         Object.keys(GAME.countries).forEach(code => {
           if (code !== GAME.playerCountry) {
-            if (GAME.countries[code].threatPerception > 60) {
-              GAME.countries[code].hostility[GAME.playerCountry] += 10;
-              GAME.worldTension += 2;
+            if (GAME.countries[code].threatPerception > 55) {
+              GAME.countries[code].hostility[GAME.playerCountry] += 8;
+              GAME.worldTension += 1.5;
             }
           }
         });
@@ -718,37 +702,46 @@
       else if (intent.type === 'BUILD_FORTIFICATION' && intent.targetRegion) {
         const reg = GAME.regions[intent.targetRegion];
         reg.fortified = true;
-        p.treasury -= 80;
-        addNewsCard('DEFENSIVE LINE CONSTRUCTED', `Engineering corps have completed heavy fortifications in ${intent.targetRegion}.`, 'diplomacy', 'Regional defense efficiency +50%.');
+        p.treasury -= 100;
+        addNewsCard('DEFENSIVE LINE ERECTED', `Heavy concrete bunkers and artillery redoubts completed in ${intent.targetRegion}.`, 'war', 'Regional defender combat efficiency +50%.');
       }
       else if (intent.type === 'COVERT_SUBVERSION' && intent.targetCountry) {
         const target = GAME.countries[intent.targetCountry];
         const policy = {
           id: 'subversion_' + Date.now(),
-          title: `Covert Operations in ${target.name}`,
+          title: `Covert Destabilisation in ${target.name}`,
           duration: 180,
           elapsed: 0,
           tickEffect: () => {
-            target.stability = Math.max(10, target.stability - 0.05);
-            p.treasury -= 0.5;
+            target.stability = Math.max(10, target.stability - 0.06);
+            p.treasury -= 0.8;
           },
-          completionMessage: `Covert subversion efforts in ${target.name} have severely undermined local governance.`
+          completionMessage: `Covert destabilisation operations in ${target.name} achieved political disruption.`
         };
         GAME.activePolicies.push(policy);
-        addNewsCard('INTELLIGENCE OPERATION INITIATED', `Secret intelligence agents dispatched to fund political dissident networks in ${target.name}.`, 'diplomacy', 'Subversive pressure applied daily.');
+        addNewsCard('BLACK-OPS INITIATED', `Intelligence assets dispatched to fund political extremism in ${target.name}.`, 'diplomacy', 'Stability decay applied daily.');
+      }
+      else if (intent.type === 'BUDGET_ADJUSTMENT') {
+        p.quality = Math.max(40, p.quality - 5);
+        p.treasury += 200;
+        p.stability -= 3;
+        addNewsCard('MILITARY BUDGET CUT', `Sovereign military expenditure reduced to bolster fiscal reserves.`, 'economy', 'Treasury +$200M, Military Training Quality -5%, Stability -3%.');
+      }
+      else if (intent.type === 'DECLARE_WAR' && intent.targetCountry) {
+        initiateWar(GAME.playerCountry, intent.targetCountry);
       }
       else {
-        addNewsCard('COMMAND INTERPRETED', `Order "${intent.raw}" translated into local military readiness updates.`, 'diplomacy', 'Staff offices adjusting logistical priority.');
+        addNewsCard('DIRECTIVE INTERPRETED', `Order "${intent.raw}" processed by general staff.`, 'diplomacy', 'Standard operational readiness updated.');
       }
 
       renderUI();
     }
 
     /* ==========================================================================
-       4. SIMULATION TICK LOOP (TIME ADVANCEMENT & CAUSALITY)
+       4. SIMULATION TICK LOOP (TIME ADVANCEMENT)
        ========================================================================== */
     function advanceTime(days) {
-      // Save checkpoint for Rewind feature
+      // Checkpoint recording for Rewind capability
       GAME.checkpointStack.push(JSON.stringify({
         date: GAME.date.getTime(),
         countries: GAME.countries,
@@ -760,31 +753,29 @@
       for (let d = 0; d < days; d++) {
         GAME.date.setDate(GAME.date.getDate() + 1);
 
-        // Process Active Persistent Policies
+        // Process Active Persistent Programmes
         for (let i = GAME.activePolicies.length - 1; i >= 0; i--) {
           const pol = GAME.activePolicies[i];
           pol.elapsed++;
           pol.tickEffect();
           if (pol.elapsed >= pol.duration) {
-            addNewsCard('POLICY COMPLETED', pol.completionMessage, 'diplomacy', 'Objectives fulfilled.');
+            addNewsCard('PROGRAMME CONCLUDED', pol.completionMessage, 'diplomacy', 'Strategic parameters finalized.');
             GAME.activePolicies.splice(i, 1);
           }
         }
 
-        // Daily Macroeconomic & Resource Mechanics
+        // Daily Macroeconomic Mechanics
         Object.keys(GAME.countries).forEach(code => {
           const c = GAME.countries[code];
-          c.treasury += (c.gdp * 0.1) - (c.army * 0.0005);
-          c.fuel = Math.max(0, c.fuel - (c.army * 0.0001));
-          
-          // Natural manpower recovery
-          c.manpower += Math.floor(c.gdp * 50);
+          c.treasury += (c.gdp * 0.12) - (c.army * 0.0004);
+          c.fuel = Math.max(0, c.fuel - (c.army * 0.00012));
+          c.manpower += Math.floor(c.gdp * 40);
         });
 
-        // Run Autonomous AI Decision Matrix weekly
+        // Weekly AI Decision Evaluation
         if (d % 7 === 0) runAutonomousAI();
 
-        // Process Dynamic Wars & Frontlines
+        // Process Frontline Combat Mechanics
         processWarFrontlines();
       }
 
@@ -792,15 +783,15 @@
     }
 
     /* ==========================================================================
-       5. AUTONOMOUS AI ENGINE (THREATS, OPPORTUNITIES, MEMORY)
+       5. AUTONOMOUS AI ENGINE (Strategic Reasoning Matrix)
        ========================================================================== */
     function runAutonomousAI() {
       Object.keys(GAME.countries).forEach(aiCode => {
-        if (aiCode === GAME.playerCountry) return; // Player is autonomous
+        if (aiCode === GAME.playerCountry) return;
 
         const ai = GAME.countries[aiCode];
         
-        // 1. Observe World & Assess Threats
+        // Evaluate Threats
         let primaryThreat = null;
         let maxHostility = 0;
         Object.keys(GAME.countries).forEach(other => {
@@ -812,66 +803,75 @@
           }
         });
 
-        // 2. AI Decision Matrix
-        if (ai.threatPerception > 70 && ai.treasury > 200) {
-          // AI Rearmament Directive
-          ai.army += 15000;
-          ai.treasury -= 50;
+        // AI Strategic Decision Paths
+        if (ai.threatPerception > 65 && ai.treasury > 180) {
+          ai.army += 12000;
+          ai.treasury -= 45;
         }
 
-        if (maxHostility > 75 && GAME.worldTension > 30 && !ai.isAtWar) {
-          // AI Opportunistic Hostility or Demands
-          if (ai.army > GAME.countries[primaryThreat].army * 1.2) {
-            addNewsCard('DIPLOMATIC ULTIMATUM', `${ai.name} issues severe warning to${GAME.countries[primaryThreat].name} over regional security concerns!`, 'war', `Tension rises dramatically.`);
-            GAME.worldTension += 3;
+        if (maxHostility > 70 && GAME.worldTension > 25 && !ai.isAtWar && primaryThreat) {
+          if (ai.army > GAME.countries[primaryThreat].army * 1.3) {
+            addNewsCard('DIPLOMATIC ULTIMATUM', `${ai.name} issued severe security demands to ${GAME.countries[primaryThreat].name}!`, 'war', 'Geopolitical tension spiked.');
+            GAME.worldTension += 2.5;
           }
         }
       });
     }
 
     /* ==========================================================================
-       6. DYNAMIC WAR & FRONTLINE ENGINE
+       6. WAR & FRONTLINE COMBAT ENGINE
        ========================================================================== */
+    function initiateWar(attackerCode, defenderCode) {
+      const warObj = {
+        attacker: attackerCode,
+        defender: defenderCode,
+        progress: 0.0,
+        targetRegion: Object.keys(GAME.regions).find(r => GAME.regions[r].owner === defenderCode) || 'Bohemia'
+      };
+      GAME.activeWars.push(warObj);
+      GAME.worldTension += 10;
+      addNewsCard('WAR DECLARED', `${GAME.countries[attackerCode].name} declared war on ${GAME.countries[defenderCode].name}!`, 'war', 'Frontlines activated. Regional control contested.');
+    }
+
     function processWarFrontlines() {
-      GAME.activeWars.forEach(war => {
+      GAME.activeWars.forEach((war, index) => {
         const attacker = GAME.countries[war.attacker];
         const defender = GAME.countries[war.defender];
+        const reg = GAME.regions[war.targetRegion];
 
         const attackerPower = attacker.army * (attacker.quality / 100) * (attacker.eqStock / 100);
-        const defenderPower = defender.army * (defender.quality / 100) * (defender.eqStock / 100) * 1.3; // Defender advantage
+        let defenderPower = defender.army * (defender.quality / 100) * (defender.eqStock / 100) * 1.25;
+        if (reg && reg.fortified) defenderPower *= 1.5;
 
         if (attackerPower > defenderPower) {
-          // Push Frontline
-          war.progress += 0.02;
-          attacker.army -= 500;
-          defender.army -= 1200;
+          war.progress += 0.03;
+          attacker.army -= 600;
+          defender.army -= 1400;
           if (war.progress >= 1.0) {
-            // Region Captured
-            const targetRegion = war.targetRegion;
-            GAME.regions[targetRegion].controller = war.attacker;
-            addNewsCard('TERRITORY CAPTURED', `${attacker.name} forces have completely occupied${targetRegion}!`, 'war', 'Regional ownership re-routed.');
+            reg.controller = war.attacker;
+            addNewsCard('TERRITORY CAPTURED', `${attacker.name} troops completely captured ${war.targetRegion}!`, 'war', 'Regional administration re-routed.');
+            GAME.activeWars.splice(index, 1);
           }
         } else {
-          // Stalemate / Repelled
-          attacker.army -= 1000;
-          defender.army -= 400;
+          attacker.army -= 1200;
+          defender.army -= 500;
         }
       });
     }
 
     /* ==========================================================================
-       7. UI RENDERING & INTERACTIVITY
+       7. UI RENDERING & INTERACTIVE UPDATES
        ========================================================================== */
     function renderUI() {
       const p = GAME.countries[GAME.playerCountry];
 
-      // Top Bar Updates
+      // Navigation Bar
       document.getElementById('date-display').innerText = GAME.date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
       document.getElementById('tension-val').innerText = GAME.worldTension.toFixed(0) + '%';
 
-      // Left Panel Updates
+      // Left Panel
       document.getElementById('player-country-name').innerText = p.name;
-      document.getElementById('player-leader').innerText = `Leader: ${p.leader} \vert{}${p.ideology}`;
+      document.getElementById('player-leader').innerText = `Leader: ${p.leader} | ${p.ideology}`;
       
       document.getElementById('val-gdp').innerText = p.gdp;
       document.getElementById('val-treasury').innerText = Math.floor(p.treasury);
@@ -887,11 +887,11 @@
       document.getElementById('val-eq').innerText = p.eqStock + '%';
       document.getElementById('val-qual').innerText = p.quality + '%';
 
-      // Active Operations Render
+      // Active Programmes List
       const opsContainer = document.getElementById('active-ops-list');
       opsContainer.innerHTML = '';
       if (GAME.activePolicies.length === 0) {
-        opsContainer.innerHTML = '<p style="color:var(--text-muted); font-size:11px;">No active continuous directives.</p>';
+        opsContainer.innerHTML = '<p style="color:var(--text-muted); font-size:10px;">No active continuous directives.</p>';
       } else {
         GAME.activePolicies.forEach(pol => {
           const pct = Math.floor((pol.elapsed / pol.duration) * 100);
@@ -905,7 +905,7 @@
         });
       }
 
-      // Render Diplomacy Tab
+      // Diplomacy List
       const dipContainer = document.getElementById('diplomacy-list');
       dipContainer.innerHTML = '';
       Object.keys(GAME.countries).forEach(code => {
@@ -915,16 +915,15 @@
             <div class="country-card" onclick="openDiplomacyWith('${code}')">
               <div class="flag-icon" style="background:${c.color}"></div>
               <div style="flex:1;">
-                <strong style="color:var(--text-bright); font-size:12px;">${c.name}</strong>
-                <div style="font-size:10px; color:var(--text-muted);">Trust: ${c.trust[GAME.playerCountry]} \vert{} Threat Perception:${c.threatPerception.toFixed(0)}%</div>
+                <strong style="color:var(--text-bright); font-size:11px;">${c.name}</strong>
+                <div style="font-size:9px; color:var(--text-muted);">Trust: ${c.trust[GAME.playerCountry]} | Threat Perception: ${c.threatPerception.toFixed(0)}%</div>
               </div>
-              <button class="btn-action" style="font-size:9px;">Talk</button>
+              <button class="btn-action" style="font-size:8px;">Talk</button>
             </div>
           `;
         }
       });
 
-      // Render Map SVGs
       renderMap();
     }
 
@@ -943,7 +942,7 @@
         
         pathElem.onmouseover = () => {
           document.getElementById('hover-region-name').innerText = regKey;
-          document.getElementById('hover-region-detail').innerText = `Controller: ${owner.name} | Industrial Capacity: ${reg.IC} IC \vert{} Fortified:${reg.fortified ? 'Yes' : 'No'}`;
+          document.getElementById('hover-region-detail').innerText = `Controller: ${owner.name} | Industrial Capacity: ${reg.IC} IC | Fortified: ${reg.fortified ? 'Yes' : 'No'}`;
         };
 
         layer.appendChild(pathElem);
@@ -957,13 +956,14 @@
       card.innerHTML = `
         <div class="news-date">${GAME.date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</div>
         <div class="news-title">${title}</div>
-        <div class="news-body">${body}</div>${effects ? `<div class="news-effects">${effects}</div>` : ''}
+        <div class="news-body">${body}</div>
+        ${effects ? `<div class="news-effects">${effects}</div>` : ''}
       `;
       feed.prepend(card);
     }
 
     /* ==========================================================================
-       8. USER CONTROLS & INTERACTION HANDLERS
+       8. USER ACTION HANDLERS & MODALS
        ========================================================================== */
     function submitCommand() {
       const input = document.getElementById('cmd-input');
@@ -978,9 +978,9 @@
       GAME.targetDipCountry = code;
       const c = GAME.countries[code];
       document.getElementById('dip-modal-title').innerText = `Diplomatic Negotiations with ${c.name}`;
-      document.getElementById('dip-modal-sub').innerText = `Trust: ${c.trust[GAME.playerCountry]} \vert{} Hostility:${c.hostility[GAME.playerCountry] > 50 ? 'High' : 'Low'}`;
+      document.getElementById('dip-modal-sub').innerText = `Trust: ${c.trust[GAME.playerCountry]} | Hostility: ${c.hostility[GAME.playerCountry] > 50 ? 'High' : 'Low'}`;
       document.getElementById('dip-chat-history').innerHTML = `
-        <div class="chat-msg them">Greetings from ${c.name}. Speak your diplomatic proposal.</div>
+        <div class="chat-msg them">Greetings from ${c.name}. State your diplomatic proposal.</div>
       `;
       document.getElementById('dip-modal').style.display = 'flex';
     }
@@ -998,18 +998,17 @@
       history.innerHTML += `<div class="chat-msg me">${msg}</div>`;
 
       const target = GAME.countries[GAME.targetDipCountry];
-      // Dynamic AI diplomatic reasoning response
       setTimeout(() => {
-        let response = `We have analyzed your proposal. `;
+        let response = `We have evaluated your proposal. `;
         if (target.trust[GAME.playerCountry] > 40) {
-          response += `In the interest of European stability, ${target.name} accepts these terms.`;
-          target.trust[GAME.playerCountry] += 5;
+          response += `In the interest of European stability, ${target.name} agrees in principle to these terms.`;
+          target.trust[GAME.playerCountry] += 4;
         } else {
-          response += `However, given your recent military posture, we cannot trust your intentions at this time.`;
+          response += `However, given your recent military posture, we must respectfully decline.`;
         }
         history.innerHTML += `<div class="chat-msg them">${response}</div>`;
         history.scrollTop = history.scrollHeight;
-      }, 600);
+      }, 500);
 
       input.value = '';
     }
@@ -1036,22 +1035,22 @@
 
     function startGame() {
       document.getElementById('start-screen').style.display = 'none';
-      addNewsCard('HISTORIA: 1936 COMMENCED', 'Europe stands on a knife-edge. Industrial rearmament, secret treaties, and sovereign ambitions will dictate the future.', 'diplomacy');
+      addNewsCard('HISTORIA 1936 INITIATED', 'Europe stands on the precipice. Causal alternate history active.', 'diplomacy');
       renderUI();
     }
 
     function saveGame() {
-      localStorage.setItem('HISTORIA_1936_SAVE', JSON.stringify(GAME));
-      alert('Game State saved to browser storage.');
+      localStorage.setItem('HISTORIA_1936_MAX_SAVE', JSON.stringify(GAME));
+      alert('Simulation state saved to local storage.');
     }
 
     function loadGame() {
-      const data = localStorage.getItem('HISTORIA_1936_SAVE');
+      const data = localStorage.getItem('HISTORIA_1936_MAX_SAVE');
       if (data) {
         Object.assign(GAME, JSON.parse(data));
         GAME.date = new Date(GAME.date);
         renderUI();
-        alert('Game State successfully loaded.');
+        alert('Simulation state restored.');
       }
     }
 
@@ -1067,7 +1066,7 @@
       }
     }
 
-    // Populate Setup Screen Country Selector
+    // Populate Setup Screen Country Grid
     const setupGrid = document.getElementById('country-select');
     Object.keys(GAME.countries).forEach(code => {
       const c = GAME.countries[code];
@@ -1075,8 +1074,8 @@
         <div class="country-card ${code === 'GER' ? 'selected' : ''}" onclick="selectSetupCountry('${code}', this)">
           <div class="flag-icon" style="background:${c.color}"></div>
           <div>
-            <strong>${c.name}</strong>
-            <div style="font-size:10px; color:var(--text-muted);">${c.ideology}</div>
+            <strong style="font-size:11px;">${c.name}</strong>
+            <div style="font-size:9px; color:var(--text-muted);">${c.ideology}</div>
           </div>
         </div>
       `;
